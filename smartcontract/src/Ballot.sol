@@ -31,6 +31,7 @@ contract VotingSystem {
         uint256 endTime;
         bool hasStarted;
         bool hasEnded;
+        string GoverningBody
         
     }
 
