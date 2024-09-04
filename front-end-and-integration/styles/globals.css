@@ -2,26 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+body{background: #000; color: #fff;}
+.message1{background-image: linear-gradient( 45deg, #001, #222, #001);}
+.message2{background-image: linear-gradient( 45deg, #101, #222, #101);}
+.message3{background-image: linear-gradient( 45deg, #010, #222, #010);}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@keyframes displayAnimation1 {0%{display: block;} 30%{display: block;} 31%{display: none;}  100%{display: none;}}
+@keyframes displayAnimation2 {0%{display: none;}  31%{display: none} 32%{display: block;} 65%{display: block;} 66%{display: none;} 100%{display: none;}}
+@keyframes displayAnimation3 {0%{display: none;} 66%{display: none} 67%{display: block} 100%{display: block;}}
+.info1{animation: displayAnimation1 45s linear infinite;}
+.info2{animation: displayAnimation2 45s linear infinite;}
+.info3{animation: displayAnimation3 45s linear infinite;}
+
+@keyframes messagecomponentAnimation{0%{} 10%{box-shadow: 2px 2px 2px 2px #003;} 30%{box-shadow: 2px 2px 2px 2px #00f;}  32%{box-shadow: 2px 2px 2px 2px #202;}  60%{box-shadow: 2px 2px 2px 2px #606}  67%{box-shadow: 2px 2px 2px 2px #020;}  100%{box-shadow: 2px 2px 2px 2px #060;}}
+.messagecomponent{animation: messagecomponentAnimation 45s linear infinite;}
+
+@keyframes fastforwardanimation {0%{transform:translate3d(0, 0, 0)} 100%{transform:translate3d(0.5cm, 0, 0)} }
+.fastforward{animation: fastforwardanimation 3s linear infinite;}
+
+.blinkinganimationoption{box-shadow:2px 2px 2px 2px #00f; transition: 0.5s ease-in-out;}
+.blinkinganimationoption:hover{background-color: #000; animation: messagecomponentAnimation 2s linear; box-shadow:2px 2px 2px 2px #fff}
+
+.blinkinganimationoption2{transition: 0.5s ease-in-out;}
+.blinkinganimationoption2:hover{background-color: #000; animation: messagecomponentAnimation 2s linear; box-shadow:2px 2px 2px 2px #fff}
+
+.applyshadowanimation{animation: messagecomponentAnimation 2s linear ;}
+
+.electionbutton{transition: 0.3s ease-in-out;}
+.electionbutton:hover{background-color: #000; box-shadow: 1px 1px 2px 1px #fff;}
+
+.hometimeout{transform: translate3d(0,200%,0); transition:0.5s ease-in-out; width:80%}
+
+.homeelectiondiv{transition: 0.3s ease-in-out;}
+.homeelectiondiv:hover{transform: scale3d(0.95,0.95,0.95);}
+
+.electionmenuoption{transition: 0.3s ease-in-out; display: none;}
+.electionmenudiv{padding:0.2cm}
+.electionmenudiv:hover .electionmenuoption{transform: translate3d(0,-1.35cm,0); display: block;}
+.electionmenudiv:hover{background-color: rgba(40,40,40,0.95)}
+
+.normalbutton{transition: 0.3s ease-in-out;}
+.normalbutton:hover{transform: scale3d(1.1, 1.1, 1.1);}
+
+.singleelectionbutton{box-shadow: 2px 2px 1px 1px #333;}
+
+.countriesdiv:hover{background-color: #111;}
+
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #502;
+    mask: radial-gradient(circle closest-side at 50% 40%,#0000 94%, #000);
+    transform-origin: 50% 40%;
+    animation: l25 0.5s infinite linear;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  
+  @keyframes l25 {
+    100% {transform: rotate(1turn)}
+  }
