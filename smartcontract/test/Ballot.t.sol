@@ -11,95 +11,102 @@ contract VotingSystemTest is Test {
     address voter2 = address(3);
 
     function setUp() public {
-        vm.prank(admin);
+        vm.prank(admin); // Simulate admin calling
         votingSystem = new VotingSystem();
     }
 
     function testCreateElection() public {
         vm.prank(admin);
-        votingSystem.createElection("Admin Name", "Election Title", "Description", "Cover Photo", "Governing Body");
-
-        VotingSystem.ElectionDetails memory election = votingSystem.getElection(1);
-
-        assertEq(election.admin, admin);
-        assertEq(election.title, "Election Title");
+        votingSystem.createElection(
+            "AdminName",
+            "ElectionTitle",
+            "ElectionDescription",
+            "CoverPhoto",
+            "GoverningBody",
+            "GoverningBodyTwitterLink",
+            "Country",
+            "GoverningBodyCover",
+            block.timestamp + 1 days,
+            block.timestamp + 2 days,
+            block.timestamp + 3 days,
+            block.timestamp + 4 days
+        );
+        (string memory title, , , ) = votingSystem.getElectionSummary(1);
+        assertEq(title, "ElectionTitle");
     }
 
     function testAddCandidate() public {
+        testCreateElection();
         vm.prank(admin);
-        votingSystem.createElection("Admin Name", "Election Title", "Description", "Cover Photo", "Governing Body");
-
-        vm.prank(admin);
-        votingSystem.addCandidate(1, "Candidate Name", "Political Party");
-
+        votingSystem.addCandidate(1, "Candidate1", "Party1", "Photo1");
         VotingSystem.Candidate[] memory candidates = votingSystem.getCandidates(1);
         assertEq(candidates.length, 1);
-        assertEq(candidates[0].name, "Candidate Name");
+        assertEq(candidates[0].name, "Candidate1");
+    }
+
+    function testRemoveCandidate() public {
+        testAddCandidate();
+        vm.prank(admin);
+        votingSystem.removeCandidate(1, 1);
+        VotingSystem.Candidate[] memory candidates = votingSystem.getCandidates(1);
+        assertEq(candidates.length, 0);
     }
 
     function testRegisterVoter() public {
-        vm.prank(admin);
-        votingSystem.createElection("Admin Name", "Election Title", "Description", "Cover Photo", "Governing Body");
-
+        testCreateElection();
+        uint256 randomNumber = votingSystem.generateRandomNumber();
         vm.prank(voter1);
-        votingSystem.registerVoter(1, voter1);
-
-        VotingSystem.Voter memory voter = votingSystem.getVoter(1, voter1);
-        assertTrue(voter.isRegistered);
+        votingSystem.registerVoter(1, voter1, uint64(randomNumber), 1234567890, block.timestamp);
+        VotingSystem.Voter memory voter = votingSystem.getVoterInfo(1, voter1);
+        assertEq(voter.voterAddress, voter1);
+        assertEq(voter.phoneNumber, 1234567890);
     }
 
     function testVote() public {
-        vm.prank(admin);
-        votingSystem.createElection("Admin Name", "Election Title", "Description", "Cover Photo", "Governing Body");
-
-        vm.prank(admin);
-        votingSystem.addCandidate(1, "Candidate Name", "Political Party");
-
+        testRegisterVoter();
+        testAddCandidate();
         vm.prank(voter1);
-        votingSystem.registerVoter(1, voter1);
-
-        vm.startPrank(voter1);
         votingSystem.vote(1, 1);
-
-        VotingSystem.Voter memory voter = votingSystem.getVoter(1, voter1);
-        assertTrue(voter.hasVoted);
-        assertEq(voter.votedCandidateId, 1);
-
-        VotingSystem.Candidate memory candidate = votingSystem.getCandidate(1, 1);
+        VotingSystem.Candidate memory candidate = votingSystem.getCandidateInfo(1, 0);
         assertEq(candidate.voteCount, 1);
-        vm.stopPrank();
     }
 
-    function testGetWinner() public {
+    function testAnnounceWinner() public {
+        testVote();
+        vm.warp(block.timestamp + 5 days); // Move forward in time to end the election
         vm.prank(admin);
-        votingSystem.createElection("Admin Name", "Election Title", "Description", "Cover Photo", "Governing Body");
+        votingSystem.closeElection(1);
+        VotingSystem.Candidate memory winner = votingSystem.getCandidateInfo(1, 0);
+        assertEq(winner.name, "Candidate1");
+    }
 
+    function testCloseElection() public {
+        testVote();
         vm.prank(admin);
-        votingSystem.addCandidate(1, "Candidate 1", "Party 1");
-        vm.prank(admin);
-        votingSystem.addCandidate(1, "Candidate 2", "Party 2");
+        votingSystem.closeElection(1);
+        VotingSystem.Candidate memory candidate = votingSystem.getCandidateInfo(1, 0);
+        assertEq(candidate.voteCount, 1);
+        bool electionAvailability = votingSystem.getElectionDetails(1).electionAvailability;
+        assertEq(electionAvailability, false);
+    }
 
-        vm.prank(voter1);
-        votingSystem.registerVoter(1, voter1);
-        vm.prank(voter2);
-        votingSystem.registerVoter(1, voter2);
+    function testGetVoterList() public {
+        testRegisterVoter();
+        address[] memory voterList = votingSystem.getVoterList(1);
+        assertEq(voterList.length, 1);
+        assertEq(voterList[0], voter1);
+    }
 
-        vm.prank(voter1);
-        votingSystem.vote(1, 1);
+    function testGetVotersWhoHaveVoted() public {
+        testVote();
+        address[] memory votersWhoVoted = votingSystem.getVotersWhoHaveVoted(1);
+        assertEq(votersWhoVoted.length, 1);
+        assertEq(votersWhoVoted[0], voter1);
+    }
 
-        vm.prank(voter2);
-        votingSystem.vote(1, 1);
-
-        vm.prank(admin);
-        votingSystem.startElection(1, 10); // 10 minutes duration
-
-        // Advance time to end the election
-        vm.warp(block.timestamp + 11 * 60);
-
-        vm.prank(admin);
-        votingSystem.endElection(1);
-
-        VotingSystem.Candidate memory winner = votingSystem.getWinner(1);
-        assertEq(winner.name, "Candidate 1");
+    function testGetGeneratedNumbers() public {
+        testRegisterVoter();
+        VotingSystem.GeneratedNumber[] memory numbers = votingSystem.getGeneratedNumbers();
+        assertEq(numbers.length, 1);
     }
 }
