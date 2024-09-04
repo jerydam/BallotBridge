@@ -40,6 +40,7 @@ struct Election {
 
 
     struct ElectionDetails {
+        uint256 electionID;
         address admin;
         string adminName;
         string electionTitle; // Field name update to match
@@ -55,7 +56,6 @@ struct Election {
         string electionCountry;
         bool electionAvailability; // Field name update to match
         string governingBody;
-        string governingBodyTwitterLink;
         string governingBodyCover;
         
     }
@@ -179,7 +179,6 @@ struct Election {
         string memory description,
         string memory coverPhoto,
         string memory governingBody,
-        string memory link, // Governing body Twitter link
         string memory country, // Country of the election
         string memory photo, // Governing body cover photo
         uint256 registrationStart,
@@ -191,6 +190,7 @@ struct Election {
 
         Election storage newElection = elections[electionCount];
         newElection.details = ElectionDetails({
+            electionID: electionCount,
             admin: msg.sender,
             adminName: adminName,
             electionTitle: title,
@@ -206,7 +206,6 @@ struct Election {
             electionCountry: country,
             electionAvailability: true,
             governingBody: governingBody,
-            governingBodyTwitterLink: link,
             governingBodyCover: photo
         });
 
@@ -230,7 +229,6 @@ struct Election {
         string memory description,
         string memory coverPhoto,
         string memory governingBody,
-        string memory link, // Governing body Twitter link
         string memory country, // Country of the election
         string memory photo, // Governing body cover photo
         uint256 registrationStart,
@@ -249,7 +247,6 @@ struct Election {
         details.electionCountry = country;
         details.electionAvailability = true;
         details.governingBody = governingBody;
-        details.governingBodyTwitterLink = link;
         details.governingBodyCover = photo;
 
         emit ElectionUpdated(
@@ -406,10 +403,6 @@ struct Election {
     Election storage election = elections[electionId];
     require(!election.voters[voterAddress].isRegistered, "Voter is already registered.");
 
-    // Assuming the OTP, phone number, and time of registration need to be stored
-    // You may want to extend the Voter struct to include these fields, but as a demo:
-
-    // Adding these fields to the Voter struct would be like:
     election.voters[voterAddress] = Voter({
         voterAddress: voterAddress,
         isRegistered: true,
@@ -452,7 +445,6 @@ struct Election {
     voter.hasVoted = true;
     voter.votedCandidateId = candidateId;
 
-    // Add voter address to the array of voters who have voted
     election.votersWhoHaveVoted.push(msg.sender);
 
     emit Voted(
