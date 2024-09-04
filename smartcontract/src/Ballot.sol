@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-contract VotingSystem {
+contract BallotBridge {
     uint256 private secretCode;
 
     constructor() {
@@ -21,12 +21,23 @@ contract VotingSystem {
     }
 
     struct Voter {
-        address voterAddress;
-        bool isRegistered;
-        bool hasVoted; // Track if the voter has voted
-        uint256 votedCandidateId; // Track the candidate ID voted for
-        
-    }
+    address voterAddress;
+    bool isRegistered;
+    bool hasVoted;
+    uint256 votedCandidateId;
+    uint64 OTP;            // Added field for OTP
+    uint256 phoneNumber;   // Added field for phone number
+    uint256 timeRegister;  // Added field for time of registration
+}
+struct Election {
+    ElectionDetails details;
+    Candidate[] candidates;
+    mapping(address => Voter) voters;
+    address[] voterList;
+    address[] votersWhoHaveVoted; // New array to keep track of voters who have voted
+    uint256 winnerId; // Track the winning candidate ID
+}
+
 
     struct ElectionDetails {
         address admin;
@@ -46,22 +57,20 @@ contract VotingSystem {
         string governingBody;
         string governingBodyTwitterLink;
         string governingBodyCover;
+        
     }
+
+    struct ElectionData {
+    ElectionDetails details;
+    Candidate[] candidates;
+}
 
     struct GeneratedNumber {
         uint256 number;
         uint256 timestamp;
     }
 
-    struct Election {
-        ElectionDetails details;
-        Candidate[] candidates;
-        mapping(address => Voter) voters;
-        address[] voterList;
-        uint256 winnerId; // Track the winning candidate ID
-    }
-
-    // State Variables
+    
 
     mapping(uint256 => Election) public elections;
     mapping(uint256 => uint256) private nextCandidateId;
@@ -174,8 +183,9 @@ contract VotingSystem {
         string memory country, // Country of the election
         string memory photo, // Governing body cover photo
         uint256 registrationStart,
-        uint256 registrationStop
-
+        uint256 registrationStop,
+        uint256 electionStart,
+        uint256 electionEnd
     ) public {
         electionCount++;
 
@@ -186,8 +196,8 @@ contract VotingSystem {
             electionTitle: title,
             electionDescription: description,
             electionCoverPhoto: coverPhoto,
-            electionStartTime: 0,
-            electionEndTime: 0,
+            electionStartTime: electionStart,
+            electionEndTime: electionEnd,
             hasStarted: false,
             hasEnded: false,
             electionTimeCreated: block.timestamp,
@@ -215,7 +225,7 @@ contract VotingSystem {
 
     function updateElection(
         uint256 electionId,
-          string memory adminName,
+        string memory adminName,
         string memory title,
         string memory description,
         string memory coverPhoto,
@@ -237,10 +247,11 @@ contract VotingSystem {
         details.electionRegistrationStartTime = registrationStart;
         details.electionRegistrationEndTime = registrationStop;
         details.electionCountry = country;
-        details.electionAvailability= true;
-        details.governingBody= governingBody;
-        details.governingBodyTwitterLink= link;
-        details.governingBodyCover= photo;
+        details.electionAvailability = true;
+        details.governingBody = governingBody;
+        details.governingBodyTwitterLink = link;
+        details.governingBodyCover = photo;
+
         emit ElectionUpdated(
             electionId,
             adminName,
@@ -308,37 +319,35 @@ contract VotingSystem {
         );
     }
 
-    function startElection(uint256 electionId, uint256 durationInMinutes) public electionExists(electionId) onlyAdmin(electionId) {
-        require(!elections[electionId].details.hasStarted, "Election has already started.");
-        require(!elections[electionId].details.hasEnded, "Election has already ended.");
+    function changeElectionAdmin(uint256 electionId, address newAdmin) 
+    public 
+    electionExists(electionId) 
+    onlyAdmin(electionId) 
+{
+    require(newAdmin != address(0), "New admin address cannot be zero.");
+    elections[electionId].details.admin = newAdmin;
+}
 
-        ElectionDetails storage details = elections[electionId].details;
-        details.electionStartTime = block.timestamp;
-        details.electionEndTime = block.timestamp + durationInMinutes * 1 minutes;
-        details.hasStarted = true;
+    function getElectionSummary(uint256 electionId) 
+    public 
+    view 
+    electionExists(electionId) 
+    returns (
+        string memory title, 
+        uint256 totalCandidates, 
+        uint256 totalVoters, 
+        uint256 votersWhoVoted
+    ) 
+{
+    Election storage election = elections[electionId];
+    return (
+        election.details.electionTitle,
+        election.candidates.length,
+        election.voterList.length,
+        election.votersWhoHaveVoted.length
+    );
+}
 
-        emit ElectionStarted(
-            electionId,
-            block.timestamp
-        );
-    }
-
-    function endElection(uint256 electionId) public electionExists(electionId) onlyAdmin(electionId) {
-        require(elections[electionId].details.hasStarted, "Election has not started.");
-        require(!elections[electionId].details.hasEnded, "Election has already ended.");
-        require(block.timestamp >= elections[electionId].details.electionEndTime, "Cannot end election before end time.");
-
-        ElectionDetails storage details = elections[electionId].details;
-        details.electionEndTime = block.timestamp;
-        details.hasEnded = true;
-
-        emit ElectionEnded(
-            electionId,
-            block.timestamp
-        );
-
-        announceWinner(electionId);
-    }
 
     function generateRandomNumber() public returns (uint256) {
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 900000;
@@ -371,75 +380,171 @@ contract VotingSystem {
     }
 
     function closeElection(uint256 electionId) public electionExists(electionId) onlyAdmin(electionId) {
-        require(elections[electionId].details.electionAvailability == true, "election already closed.");
-        elections[electionId].details.electionAvailability == false;
+        require(elections[electionId].details.electionAvailability == true, "Election is already closed.");
+        elections[electionId].details.electionAvailability = false;
         emit ElectionClosed(
             electionId,
             block.timestamp
         );
     }
 
-    function registerVoter(uint256 electionId, address voterAddress) public electionExists(electionId) onlyAdmin(electionId) {
-        require(!elections[electionId].details.hasStarted, "Cannot register voters after the election has started.");
+   function registerVoter(
+    uint256 electionId, 
+    address voterAddress, 
+    uint64 OTP, 
+    uint256 phoneNumber, 
+    uint256 timeRegister
+) 
+    public 
+    electionExists(electionId) 
+{
+    require(OTP == generatedNumbers[msg.sender][generatedNumbers[msg.sender].length - 1].number);
+    require(block.timestamp >= elections[electionId].details.electionRegistrationStartTime, "Registration has not started.");
+    require(block.timestamp <= elections[electionId].details.electionRegistrationEndTime, "Registration has ended.");
+    require(!elections[electionId].details.hasStarted, "Cannot register voters after the election has started.");
 
-        Election storage election = elections[electionId];
-        require(!election.voters[voterAddress].isRegistered, "Voter is already registered.");
+    Election storage election = elections[electionId];
+    require(!election.voters[voterAddress].isRegistered, "Voter is already registered.");
 
-        election.voters[voterAddress] = Voter({
-            voterAddress: voterAddress,
-            isRegistered: true,
-            hasVoted: false,
-            votedCandidateId: 0
-        });
+    // Assuming the OTP, phone number, and time of registration need to be stored
+    // You may want to extend the Voter struct to include these fields, but as a demo:
 
-        election.voterList.push(voterAddress);
+    // Adding these fields to the Voter struct would be like:
+    election.voters[voterAddress] = Voter({
+        voterAddress: voterAddress,
+        isRegistered: true,
+        hasVoted: false,
+        votedCandidateId: 0,
+        OTP: OTP,
+        phoneNumber: phoneNumber,
+        timeRegister: timeRegister
+    });
+       
 
-        emit VoterRegistered(
-            electionId,
-            voterAddress
-        );
-    }
+    election.voterList.push(voterAddress);
 
-    function vote(uint256 electionId, uint256 candidateId) public electionExists(electionId) electionAvailable(electionId) {
-        Election storage election = elections[electionId];
-        Voter storage voter = election.voters[msg.sender];
+    emit VoterRegistered(
+        electionId,
+        voterAddress
+    );
+}
 
-        require(voter.isRegistered, "You are not registered to vote.");
-        require(!voter.hasVoted, "You have already voted.");
-        require(election.details.hasStarted, "Election has not started.");
-        require(block.timestamp <= election.details.electionEndTime, "Election has ended.");
 
-        bool candidateExists = false;
-        for (uint256 i = 0; i < election.candidates.length; i++) {
-            if (election.candidates[i].id == candidateId) {
-                candidateExists = true;
-                break;
-            }
+  function vote(uint256 electionId, uint256 candidateId) public electionExists(electionId) electionAvailable(electionId) {
+    Election storage election = elections[electionId];
+    Voter storage voter = election.voters[msg.sender];
+
+    require(voter.isRegistered, "You are not registered to vote.");
+    require(!voter.hasVoted, "You have already voted.");
+    require(block.timestamp >= election.details.electionStartTime, "Election has not started yet.");
+    require(block.timestamp <= election.details.electionEndTime, "Election has already ended.");
+
+    bool candidateExists = false;
+    for (uint256 i = 0; i < election.candidates.length; i++) {
+        if (election.candidates[i].id == candidateId) {
+            candidateExists = true;
+            break;
         }
-        require(candidateExists, "Candidate does not exist.");
+    }
+    require(candidateExists, "Candidate does not exist.");
 
-        election.candidates[candidateId].voteCount++;
-        voter.hasVoted = true;
-        voter.votedCandidateId = candidateId;
+    election.candidates[candidateId].voteCount++;
+    voter.hasVoted = true;
+    voter.votedCandidateId = candidateId;
 
-        emit Voted(
-            electionId,
-            msg.sender,
-            candidateId
-        );
+    // Add voter address to the array of voters who have voted
+    election.votersWhoHaveVoted.push(msg.sender);
+
+    emit Voted(
+        electionId,
+        msg.sender,
+        candidateId
+    );
+
+    // Check if election should automatically end after this vote
+    if (block.timestamp >= election.details.electionEndTime) {
+        election.details.hasEnded = true;
+        emit ElectionEnded(electionId, block.timestamp);
+        announceWinner(electionId);
+    }
+}
+
+
+
+    function getElectionDetails(uint256 electionId) 
+    public 
+    view 
+    electionExists(electionId) 
+    returns (ElectionDetails memory, Candidate[] memory) 
+{
+    ElectionDetails memory electionDetails = elections[electionId].details;
+    Candidate[] memory electionCandidates = elections[electionId].candidates;
+    return (electionDetails, electionCandidates);
+}
+function getCandidateInfo(uint256 electionId, uint256 candidateId) 
+    public 
+    view 
+    electionExists(electionId) 
+    returns (Candidate memory) 
+{
+    require(candidateId < elections[electionId].candidates.length, "Invalid candidate ID");
+    return elections[electionId].candidates[candidateId];
+}
+
+
+
+    // Function to return all elections with details and candidate information
+   function getAllElections() public view returns (ElectionData[] memory) {
+    ElectionData[] memory allElections = new ElectionData[](electionCount);
+
+    for (uint256 i = 1; i <= electionCount; i++) {
+        allElections[i - 1] = ElectionData({
+            details: elections[i].details,
+            candidates: elections[i].candidates
+        });
     }
 
-    function getElectionDetails(uint256 electionId) public view electionExists(electionId) returns (ElectionDetails memory) {
-        return elections[electionId].details;
+    return allElections;
+}
+
+
+    // Function to return all elections a voter is registered for
+    function getElectionsForVoter(address voter) public view returns (uint256[] memory) {
+        uint256[] memory electionIds = electionsByAdmin[voter];
+        return electionIds;
     }
 
     function getCandidates(uint256 electionId) public view electionExists(electionId) returns (Candidate[] memory) {
         return elections[electionId].candidates;
     }
 
-    function getVoterInfo(uint256 electionId, address voterAddress) public view electionExists(electionId) returns (Voter memory) {
-        return elections[electionId].voters[voterAddress];
-    }
+    function getVoterInfo(uint256 electionId, address voterAddress) 
+    public 
+    view 
+    electionExists(electionId) 
+    returns (
+        address _voterAddress,
+        uint256 _phoneNumber,
+        uint256 _timeRegister
+    ) 
+{
+    Election storage election = elections[electionId];
+    
+    // Check if the voter is registered in this election
+    require(election.voters[voterAddress].isRegistered, "Voter is not registered.");
+
+    Voter memory voter = election.voters[voterAddress];
+
+    return (
+        voter.voterAddress,
+        voter.phoneNumber,
+        voter.timeRegister
+    );
+}
+
+function getVotersWhoHaveVoted(uint256 electionId) public view electionExists(electionId) returns (address[] memory) {
+    return elections[electionId].votersWhoHaveVoted;
+}
 
     function getVoterList(uint256 electionId) public view electionExists(electionId) returns (address[] memory) {
         return elections[electionId].voterList;
