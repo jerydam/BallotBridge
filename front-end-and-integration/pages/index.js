@@ -238,85 +238,15 @@ export default function BallotBridgeHome() {
     setCurrentSingleElectionComponent("defaultSingleElectionComponent")
   }
 
-  // //here we will start reading from and writing to the contracts
-  //   //read from NFT contract for user details and collection details
-  //   const [userRBTCbalance, setuserRBTCbalance] = useState()
-  //   const [registeredUsername, setregisteredUsername] = useState()
-  //   const [showUsername, setShowUsername] = useState()
-  //   const [soldBalance, setSoldBalance] = useState()
-  //   const [dateJoined, setDateJoined] = useState()
-  //   const [epochDateJoined, setepochDateJoined] = useState()
-  //   const [creatorProfilePhoto, setcreatorProfilePhoto] = useState()
-  //   const [allPublicCollections, setAllPublicCollections] = useState([])
-  //   const [userCollections, setUserCollections] = useState([])
-  //   useEffect(()=>{
-  //     const getTheData = async() => {
-  //       if(isConnected){
-  //          //read settings first
-  //          const ethersProvider = new BrowserProvider(walletProvider) 
-  //          const nftContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
-  //        try {
-  //         const RBTCbalance = await ethersProvider.getBalance(address)
-  //         const parseRBTCbalance = formatUnits(RBTCbalance, 18);
-  //         console.log(parseRBTCbalance)
-  //         setuserRBTCbalance(parseRBTCbalance)
-  //         const userDetails = await nftContractReadSettings.users(address)
-  //         console.log(userDetails)
-  //         const registeredusername = userDetails.username.toString()
-  //         console.log(registeredusername)
-  //         setregisteredUsername(registeredusername)
-  //         setShowUsername(bytes32ToString(registeredusername))
-  //         const datejoined = userDetails.joined_at.toString()
-  //         setepochDateJoined(datejoined)
-  //         const convertedDateJoined = new Date(datejoined.toString() * 1000).toLocaleString()
-  //         setDateJoined(convertedDateJoined)
-  //         const soldbalance = userDetails.balance.toString()
-  //         console.log("sold:" + soldbalance)
-  //         const parsedSoldBalance = parseFloat(formatUnits(soldbalance, 18)).toFixed(10)
-  //         setSoldBalance(parsedSoldBalance)
-  //         const profilePhoto = userDetails.avatar.toString()
-  //         console.log(profilePhoto)
-  //         setcreatorProfilePhoto(profilePhoto)
-  //         const allpubliccollections = await nftContractReadSettings.getAllPublicCollections()
-  //         console.log(allpubliccollections)
-  //         setAllPublicCollections(allpubliccollections)
-  //         const specificuserdetails = await nftContractReadSettings.getUserDetails(address)
-  //         const specificusercollections = specificuserdetails[1]
-  //         setUserCollections(specificusercollections)
-  //         console.log("specificusercollections:" + specificusercollections)
-  //       } catch (error) {
-  //         console.log(error)
-  //       }
-  //     }
-  //     }
-  //     getTheData();  
-  //   }, [isConnected, address, loading])
-
-      // //function to set collection visibility
-      // const collectionVisibility = async (initialCollectionContractAddress, visibility) => {
-      //   if(isConnected){
-      //    setLoading(true) 
-      //    const ethersProvider = new BrowserProvider(walletProvider) 
-      //    const signer = await ethersProvider.getSigner()
-      //    const nftContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
-      //    try {
-      //     const collectionvisibility = await nftContractWriteSettings.changeCollectionVisibility(initialCollectionContractAddress, visibility);
-      //    } catch (error) {
-      //     console.log(error)
-      //     setLoading(false)
-      //    }
-      //    finally {
-      //     setLoading(false)
-      //    }
-      //   }
-      // }
-
       //function for uploading and getting election cover upload
       const [theElectionCoverPhotoHash, setTheElectionCoverPhotoHash] = useState();
       const [theElectionCoverPhotoFile, setTheElectionCoverPhotoFile] = useState()
       const uploadElectionCover = async () => {
         if(isConnected){
           setLoading(true) 
+          setTimeout(() => {
+            setLoading(false)
+          }, 10000)
         try {
           const formData = new FormData();
           formData.append('file', theElectionCoverPhotoFile);
@@ -342,6 +272,9 @@ export default function BallotBridgeHome() {
       const uploadGoverningBodyLogo = async () => {
         if(isConnected){
           setLoading(true) 
+          setTimeout(() => {
+            setLoading(false)
+          }, 10000)
         try {
           const formData = new FormData();
           formData.append('file', theGoverningBodyLogoFile);
@@ -367,6 +300,9 @@ export default function BallotBridgeHome() {
             const uploadCandidatePortrait = async () => {
               if(isConnected){
                 setLoading(true) 
+                setTimeout(() => {
+                  setLoading(false)
+                }, 10000)
               try {
                 const formData = new FormData();
                 formData.append('file', theCandidatePortraitFile);
@@ -391,7 +327,6 @@ export default function BallotBridgeHome() {
         const [electionTitle, setElectionTitle] = useState()
         const [electionDescription, setElectionDescription] = useState()
         const [governingBody, setGoverningBody] = useState()
-        const [governingBodyXlink, setGoverningBodyXlink] = useState()
         const [electionRegStartDate, setElectionRegStartDate] = useState()
         const [electionRegEndDate, setElectionRegEndDate] = useState()
         const [votingStartDate, setVotingStartDate] = useState()
@@ -413,7 +348,7 @@ export default function BallotBridgeHome() {
            const votingEndEpoch = toEpoch(votingEndDate)
            try {
             const createAnElection = await electionContractWriteSettings.createElection(administratorName, electionTitle, electionDescription, theElectionCoverPhotoHash, 
-              governingBody, governingBodyXlink, getCountry, theGoverningBodyLogoHash, regStartEpoch, regEndEpoch, votingStartEpoch, votingEndEpoch);
+              governingBody, getCountry, theGoverningBodyLogoHash, regStartEpoch, regEndEpoch, votingStartEpoch, votingEndEpoch);
             resetControlCreateElectionVisibility()
            } catch (error) {
             console.log(error)
@@ -435,11 +370,31 @@ export default function BallotBridgeHome() {
            const ethersProvider = new BrowserProvider(walletProvider) 
            const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
          try {
-          const electionArray = []
           const showallelections = await electionContractReadSettings.getAllElections()
-          electionArray.push(showallelections)
-          setAllElections(electionArray)
-          console.log("election array:" + electionArray)
+          const electionsArray = showallelections.map(election => {
+            const { details } = election;
+            return {
+              electionID: Number(details[0]),
+              admin: details[1],
+              adminName: details[2],
+              electionTitle: details[3],
+              electionDescription: details[4],
+              electionCoverPhoto: details[5],
+              electionStartTime: Number(details[6]),
+              electionEndTime: Number(details[7]),
+              hasStarted: details[8],
+              hasEnded: details[9],
+              electionTimeCreated: Number(details[10]),
+              electionRegistrationStartTime: Number(details[11]),
+              electionRegistrationEndTime: Number(details[12]),
+              electionCountry: details[13],
+              electionAvailability: details[14],
+              governingBody: details[15],
+              governingBodyCover: details[16],
+            };
+          });
+          setAllElections(electionsArray);
+          console.log("election array:" + electionsArray)
         } catch (error) {
           console.log(error)
         }
@@ -448,46 +403,489 @@ export default function BallotBridgeHome() {
       getAllElections();  
     }, [isConnected, address, loading])
 
-    //read single election from election contract
-    const [singleElection, setSingleElection] = useState([])
+    //read all vote ongoing elections from election contract
+    const [allVoteOngoingElections, setAllVoteOngoingElections] = useState([])
     useEffect(()=>{
-      const getSingleElections = async() => {
+      const getAllVoteOngoingElections = async() => {
         if(isConnected){
            //read settings first
            const ethersProvider = new BrowserProvider(walletProvider) 
            const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
          try {
-  
-
-          const showelection = await electionContractReadSettings.getElectionDetails("1")
-          const singleElectionArray = showelection.map(election => ({
-            admin: election[0],
-            adminName: election[1],
-            electionTitle: election.electionTitle,
-            electionDescription: election[3],
-            electionCoverPhoto: election[4],
-            electionStartTime: Number(election[5]),
-            electionEndTime: Number(election[6]),
-            hasStarted: election[7],
-            hasEnded: election[8],
-            electionTimeCreated: Number(election[9]),
-            electionRegistrationStartTime: Number(election[10]),
-            electionRegistrationEndTime: Number(election[11]),
-            electionCountry: election[12],
-            electionAvailability: election[13],
-            governingBody: election[14],
-            governingBodyTwitterLink: election[15],
-            governingBodyCover: election[16],
-          }));
-          setSingleElection(singleElectionArray)
-          console.log("single election array:" + singleElectionArray)
+          const showallelections = await electionContractReadSettings.getAllElections()
+          const currentTime = (new Date().getTime() / 1000)
+          const electionsArray = showallelections
+          .filter(election => {
+            const { details } = election;
+            const electionStartTime = Number(details[6]);
+            const electionEndTime = Number(details[7]);
+            return currentTime < electionEndTime & currentTime > electionStartTime;
+          })
+          .map(election => {
+            const { details } = election;
+            return {
+              electionID: Number(details[0]),
+              admin: details[1],
+              adminName: details[2],
+              electionTitle: details[3],
+              electionDescription: details[4],
+              electionCoverPhoto: details[5],
+              electionStartTime: Number(details[6]),
+              electionEndTime: Number(details[7]),
+              hasStarted: details[8],
+              hasEnded: details[9],
+              electionTimeCreated: Number(details[10]),
+              electionRegistrationStartTime: Number(details[11]),
+              electionRegistrationEndTime: Number(details[12]),
+              electionCountry: details[13],
+              electionAvailability: details[14],
+              governingBody: details[15],
+              governingBodyCover: details[16],
+            };
+          });
+          setAllVoteOngoingElections(electionsArray);
+          console.log("election array:" + electionsArray)
         } catch (error) {
           console.log(error)
         }
       }
       }
-      getSingleElections();  
+      getAllVoteOngoingElections();  
     }, [isConnected, address, loading])
+
+     //read all registration ongoing elections from election contract
+    const [allRegistrationOngoingElections, setAllRegistrationOngoingElections] = useState([])
+    useEffect(()=>{
+      const getAllRegistrationOngoingElections = async() => {
+        if(isConnected){
+           //read settings first
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
+         try {
+          const showallelections = await electionContractReadSettings.getAllElections()
+          const currentTime = (new Date().getTime() / 1000)
+          const electionsArray = showallelections
+          .filter(election => {
+            const { details } = election;
+            const electionRegistrationStartTime = Number(details[11]);
+            const electionRegistrationEndTime = Number(details[12]);
+            return currentTime > electionRegistrationStartTime & currentTime < electionRegistrationEndTime;
+          })
+          .map(election => {
+            const { details } = election;
+            return {
+              electionID: Number(details[0]),
+              admin: details[1],
+              adminName: details[2],
+              electionTitle: details[3],
+              electionDescription: details[4],
+              electionCoverPhoto: details[5],
+              electionStartTime: Number(details[6]),
+              electionEndTime: Number(details[7]),
+              hasStarted: details[8],
+              hasEnded: details[9],
+              electionTimeCreated: Number(details[10]),
+              electionRegistrationStartTime: Number(details[11]),
+              electionRegistrationEndTime: Number(details[12]),
+              electionCountry: details[13],
+              electionAvailability: details[14],
+              governingBody: details[15],
+              governingBodyCover: details[16],
+            };
+          });
+          setAllRegistrationOngoingElections(electionsArray);
+          console.log("election array:" + electionsArray)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      }
+      getAllRegistrationOngoingElections();  
+    }, [isConnected, address, loading])
+
+    //read all upcoming elections from election contract
+    const [allUpcomingElections, setAllUpcomingElections] = useState([])
+    useEffect(()=>{
+      const getAllUpcomingElections = async() => {
+        if(isConnected){
+           //read settings first
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
+         try {
+          const showallelections = await electionContractReadSettings.getAllElections()
+          const currentTime = (new Date().getTime() / 1000)
+          const electionsArray = showallelections
+          .filter(election => {
+            const { details } = election;
+            const electionRegistrationStartTime = Number(details[11]);
+            return currentTime < electionRegistrationStartTime;
+          })
+          .map(election => {
+            const { details } = election;
+            return {
+              electionID: Number(details[0]),
+              admin: details[1],
+              adminName: details[2],
+              electionTitle: details[3],
+              electionDescription: details[4],
+              electionCoverPhoto: details[5],
+              electionStartTime: Number(details[6]),
+              electionEndTime: Number(details[7]),
+              hasStarted: details[8],
+              hasEnded: details[9],
+              electionTimeCreated: Number(details[10]),
+              electionRegistrationStartTime: Number(details[11]),
+              electionRegistrationEndTime: Number(details[12]),
+              electionCountry: details[13],
+              electionAvailability: details[14],
+              governingBody: details[15],
+              governingBodyCover: details[16],
+            };
+          });
+          setAllUpcomingElections(electionsArray);
+          console.log("election array:" + electionsArray)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      }
+      getAllUpcomingElections();  
+    }, [isConnected, address, loading])
+
+    //read all ended elections from election contract
+    const [allEndedElections, setAllEndedElections] = useState([])
+    useEffect(()=>{
+      const getAllEndedElections = async() => {
+        if(isConnected){
+           //read settings first
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
+         try {
+          const showallelections = await electionContractReadSettings.getAllElections()
+          const currentTime = (new Date().getTime() / 1000)
+          const electionsArray = showallelections
+          .filter(election => {
+            const { details } = election;
+            const electionEndTime = Number(details[7]);
+            return currentTime > electionEndTime;
+          })
+          .map(election => {
+            const { details } = election;
+            return {
+              electionID: Number(details[0]),
+              admin: details[1],
+              adminName: details[2],
+              electionTitle: details[3],
+              electionDescription: details[4],
+              electionCoverPhoto: details[5],
+              electionStartTime: Number(details[6]),
+              electionEndTime: Number(details[7]),
+              hasStarted: details[8],
+              hasEnded: details[9],
+              electionTimeCreated: Number(details[10]),
+              electionRegistrationStartTime: Number(details[11]),
+              electionRegistrationEndTime: Number(details[12]),
+              electionCountry: details[13],
+              electionAvailability: details[14],
+              governingBody: details[15],
+              governingBodyCover: details[16],
+            };
+          });
+          setAllEndedElections(electionsArray);
+          console.log("election array:" + electionsArray)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      }
+      getAllEndedElections();  
+    }, [isConnected, address, loading])
+
+        //read all your elections from election contract
+    const [allYourElections, setAllYourElections] = useState([])
+    useEffect(()=>{
+      const getAllYourElections = async() => {
+        if(isConnected){
+           //read settings first
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
+         try {
+          const showallelections = await electionContractReadSettings.getAllElections()
+          const currentTime = (new Date().getTime() / 1000)
+          const electionsArray = showallelections
+          .filter(election => {
+            const { details } = election;
+            const admin = Number(details[1]);
+            return address == admin;
+          })
+          .map(election => {
+            const { details } = election;
+            return {
+              electionID: Number(details[0]),
+              admin: details[1],
+              adminName: details[2],
+              electionTitle: details[3],
+              electionDescription: details[4],
+              electionCoverPhoto: details[5],
+              electionStartTime: Number(details[6]),
+              electionEndTime: Number(details[7]),
+              hasStarted: details[8],
+              hasEnded: details[9],
+              electionTimeCreated: Number(details[10]),
+              electionRegistrationStartTime: Number(details[11]),
+              electionRegistrationEndTime: Number(details[12]),
+              electionCountry: details[13],
+              electionAvailability: details[14],
+              governingBody: details[15],
+              governingBodyCover: details[16],
+            };
+          });
+          setAllYourElections(electionsArray);
+          console.log("election array:" + electionsArray)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      }
+      getAllYourElections();  
+    }, [isConnected, address, loading])
+
+      //read all searched elections from election contract
+    const [allSearchedElections, setAllSearchedElections] = useState([])
+    const [searchQuery, setSearchQuery] = useState()
+      const getAllSearchedElections = async() => {
+        if(isConnected){
+          setLoading(true) 
+           //read settings first
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider) 
+           setcurrentElectionButton("searchResults")
+           setAllBg("#001")
+           setAllBoxShadow("1px 1px 2px 1px #00f")
+           setVoteOngoingBg("#001")
+           setVoteOngoingBoxShadow("1px 1px 2px 1px #00f")
+           setRegistrationOngoingBg("#001")
+           setRegistrationOngoingBoxShadow("1px 1px 2px 1px #00f")
+           setUpcomingBg("#001")
+           setUpcomingBoxShadow("1px 1px 2px 1px #00f")
+           setEndedBg("#001")
+           setEndedBoxShadow("1px 1px 2px 1px #00f")
+           setYourElectionsBg("#001")
+           setYourElectionsBoxShadow("1px 1px 2px 1px #00f")      
+         try {
+          const showallelections = await electionContractReadSettings.getAllElections()
+          const electionsArray = showallelections
+          .filter(election => {
+            const { details } = election;
+            const electionTitle = details[3];
+            const electionDescription = details[4]
+            const electionCountry = details[13]
+            const governingBody = details[15]
+            return electionTitle.toLowerCase().includes(searchQuery.toLowerCase()) || electionDescription.toLowerCase().includes(searchQuery.toLowerCase()) || electionCountry.toLowerCase() == searchQuery.toLowerCase() || governingBody.toLowerCase() == searchQuery.toLowerCase();
+          })
+          .map(election => {
+            const { details } = election;
+            return {
+              electionID: Number(details[0]),
+              admin: details[1],
+              adminName: details[2],
+              electionTitle: details[3],
+              electionDescription: details[4],
+              electionCoverPhoto: details[5],
+              electionStartTime: Number(details[6]),
+              electionEndTime: Number(details[7]),
+              hasStarted: details[8],
+              hasEnded: details[9],
+              electionTimeCreated: Number(details[10]),
+              electionRegistrationStartTime: Number(details[11]),
+              electionRegistrationEndTime: Number(details[12]),
+              electionCountry: details[13],
+              electionAvailability: details[14],
+              governingBody: details[15],
+              governingBodyCover: details[16],
+            };
+          });
+          setAllSearchedElections(electionsArray);
+          console.log("election array:" + electionsArray)
+          setLoading(false) 
+        } catch (error) {
+          console.log(error)
+          setLoading(false) 
+        }
+        finally {
+          setLoading(false) 
+        }
+      }
+      }
+
+
+    //read single election from election contract
+    const [singleElection, setSingleElection] = useState([])
+    const [clickedElectionID, setClickedElectionID] = useState();
+      const getSingleElections = async(electionid) => {
+        if(isConnected){
+           //read settings first
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
+         try {
+          const singleElectionArray = []
+          const showelection = await electionContractReadSettings.getElectionDetails(electionid)
+          singleElectionArray.push(showelection)
+          setSingleElection(singleElectionArray)
+          console.log("single election array:" + singleElectionArray)
+          setClickedElectionID(electionid.toString())
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      }
+
+         //function to add a candidate to an election
+         const [candidateName, setCandidateName] = useState()
+         const [candidateParty, setCandidateParty] = useState()
+         const addTheCandidate = async () => {
+          if(isConnected){
+           setLoading(true) 
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const signer = await ethersProvider.getSigner()
+           const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+           try {
+            const addcandidate = await electionContractWriteSettings.addCandidate(clickedElectionID, candidateName, candidateParty, theCandidatePortraitHash)
+            resetControlAddCandidate()
+           } catch (error) {
+            console.log(error)
+            setLoading(false)
+           }
+           finally {
+            setLoading(false)
+           }
+          }
+        }
+
+         //function to close an election
+         const closeElection = async () => {
+          if(isConnected){
+           setLoading(true) 
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const signer = await ethersProvider.getSigner()
+           const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+           try {
+            const closeelection = await electionContractWriteSettings.closeElection(clickedElectionID)
+           } catch (error) {
+            console.log(error)
+            setLoading(false)
+           }
+           finally {
+            setLoading(false)
+           }
+          }
+        }
+
+         //function to update election
+         const updateTheElection = async () => {
+          if(isConnected){
+           setLoading(true) 
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const signer = await ethersProvider.getSigner()
+           const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+            // Convert the dates to epoch for the contract
+           const toEpoch = (dateString) => Math.floor(new Date(dateString).getTime() / 1000);
+           const regStartEpoch = toEpoch(electionRegStartDate)
+           const regEndEpoch = toEpoch(electionRegEndDate)
+           try {
+            const updateElection = await electionContractWriteSettings.updateElection(clickedElectionID, administratorName, electionTitle, electionDescription, 
+              theElectionCoverPhotoHash, governingBody, getCountry, theGoverningBodyLogoHash, regStartEpoch, regEndEpoch);
+              resetControlUpdateElection()
+           } catch (error) {
+            console.log(error)
+            setLoading(false)
+           }
+           finally {
+            setLoading(false)
+           }
+          }
+        }
+
+        //read all the candidates for an election
+          const [allTheCandidates, setAllTheCandidates] = useState([])
+          const getAllTheCandidates = async(electionid) => {
+            if(isConnected){
+               //read settings first
+               const ethersProvider = new BrowserProvider(walletProvider) 
+               const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
+               try {
+                const showallthecandidates = await electionContractReadSettings.getCandidates(electionid);
+                const candidatesArray = showallthecandidates.map(candidate => {
+                  return {
+                    id: Number(candidate.id),
+                    name: candidate.name,
+                    politicalParty: candidate.politicalParty,
+                    addedTime: Number(candidate.addedTime),
+                    voteCount: Number(candidate.voteCount),
+                    candidatePhoto: candidate.candidatePhoto,
+                  };
+                });
+                setAllTheCandidates(candidatesArray);
+                console.log("candidate array:", candidatesArray);
+            } catch (error) {
+              console.log(error)
+            }
+          }
+          }
+
+         //function to vote for a candidate
+         const voteForCandidate = async (candidateid) => {
+          if(isConnected){
+           setLoading(true) 
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const signer = await ethersProvider.getSigner()
+           const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+           try {
+            const votecandidate = await electionContractWriteSettings.vote(clickedElectionID, candidateid);
+           } catch (error) {
+            console.log(error)
+            setLoading(false)
+           }
+           finally {
+            setLoading(false)
+           }
+          }
+        }
+
+          //function to remove a candidate
+         const removeCandidate = async (candidateid) => {
+          if(isConnected){
+           setLoading(true) 
+           const ethersProvider = new BrowserProvider(walletProvider) 
+           const signer = await ethersProvider.getSigner()
+           const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+           try {
+            const removecandidate = await electionContractWriteSettings.removeCandidate(clickedElectionID, candidateid);
+           } catch (error) {
+            console.log(error)
+            setLoading(false)
+           }
+           finally {
+            setLoading(false)
+           }
+          }
+        }
+
+            // pagination for all public elections
+            const [currentAllElectionsPage, setcurrentAllElectionsPage] = useState(1);
+            const PublicElectionsPerPage = 12;
+            const indexOfLastPublicElection = currentAllElectionsPage * PublicElectionsPerPage;
+            const indexOfFirstPublicElection = indexOfLastPublicElection - PublicElectionsPerPage;
+            const currentAllElections = allElections.slice(indexOfFirstPublicElection, indexOfLastPublicElection);
+            const currentVoteOngoingElections = allVoteOngoingElections.slice(indexOfFirstPublicElection, indexOfLastPublicElection);
+            const currentRegistrationOngoingElections = allRegistrationOngoingElections.slice(indexOfFirstPublicElection, indexOfLastPublicElection); 
+            const currentUpcomingElections = allUpcomingElections.slice(indexOfFirstPublicElection, indexOfLastPublicElection);
+            const currentEndedElections = allEndedElections.slice(indexOfFirstPublicElection, indexOfLastPublicElection);
+            const currentYourElections = allYourElections.slice(indexOfFirstPublicElection, indexOfLastPublicElection);
+            const currentSearchedElections = allSearchedElections.slice(indexOfFirstPublicElection, indexOfLastPublicElection);
+            const paginate = (pageNumber) => {
+              setcurrentAllElectionsPage(pageNumber);
+            };
 
   return (
     <>
@@ -522,28 +920,35 @@ export default function BallotBridgeHome() {
     <div>
     <div className='text-center mt-[1.5cm] '>
         <span className='bg-[#000] text-[#fff] px-[0.5cm] py-[0.2cm] rounded-full' style={{border:"2px solid #00f"}}>
-        <form onSubmit={{}} style={{display:"inline-block"}}>
-        <input type="text" placeholder="Search for an election...." className='bg-[#000] w-[85%] placeholder-[#fff] text-[#fff] text-[90%] outline-none' /><img src="images/search.png" width="20" className='ml-[0.2cm] cursor-pointer' onClick={{}} style={{display:"inline-block"}}/>
+        <form onSubmit={(e) => {e.preventDefault(); getAllSearchedElections()}} style={{display:"inline-block"}}>
+        <input type="text" placeholder="Search for an election...." className='bg-[#000] w-[85%] placeholder-[#fff] text-[#fff] text-[90%] outline-none' onChange={(e) => setSearchQuery(e.target.value)} /><img src="images/search.png" width="20" className='ml-[0.2cm] cursor-pointer' onClick={(e) => {e.preventDefault(); getAllSearchedElections()}} style={{display:"inline-block"}}/>
         </form>
         </span>
     </div>
     <div className='text-center mt-[0.5cm]'>
-      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheAllButton()} style={{boxShadow:allBoxShadow, background:allBg}}>All (20)</button>
-      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheVoteOngoingButton()} style={{boxShadow:voteOngoingBoxShadow, background:voteOngoingBg}}>Vote ongoing (5)</button>
-      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheRegistrationOngoingButton()} style={{boxShadow:registrationOngoingBoxShadow, background:registrationOngoingBg}}>Registration ongoing (3)</button>
-      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheUpcomingButton()} style={{boxShadow:upcomingboxShadow, background:upcomingBg}}>Upcoming (8)</button>
-      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheEndedButton()} style={{boxShadow:endedBoxShadow, background:endedBg}}>Ended (5)</button>
-      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheYourElectionsButton()} style={{boxShadow:yourElectionsBoxShadow, background:yourElectionsBg}}>Your elections (3)</button>
+      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheAllButton()} style={{boxShadow:allBoxShadow, background:allBg}}>All ({allElections.length.toString()})</button>
+      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheVoteOngoingButton()} style={{boxShadow:voteOngoingBoxShadow, background:voteOngoingBg}}>Vote ongoing ({allVoteOngoingElections.length.toString()})</button>
+      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheRegistrationOngoingButton()} style={{boxShadow:registrationOngoingBoxShadow, background:registrationOngoingBg}}>Registration ongoing ({allRegistrationOngoingElections.length.toString()})</button>
+      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheUpcomingButton()} style={{boxShadow:upcomingboxShadow, background:upcomingBg}}>Upcoming ({allUpcomingElections.length.toString()})</button>
+      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheEndedButton()} style={{boxShadow:endedBoxShadow, background:endedBg}}>Ended ({allEndedElections.length.toString()})</button>
+      <button className='p-[0.15cm] px-[0.3cm] rounded-md m-[0.2cm] mx-[0.4cm] electionbutton' onClick={(e) => controlTheYourElectionsButton()} style={{boxShadow:yourElectionsBoxShadow, background:yourElectionsBg}}>Your elections ({allYourElections.length.toString()})</button>
     </div>
 
     {currentElectionButton === "all" &&
     (<div>
     <div className='mt-[1cm] text-center'>
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
-      {allElections.map((elections, index) => (
-      <div key={index} className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,30,0,0.95)]' style={{display:"inline-block"}}>72 hr : 54 min : 4 sec</div>
+      {currentAllElections.map((elections) => (
+      <div className='grid-cols-1 mb-[0.5cm]'>
+      <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+        {(((new Date().getTime() / 1000) < elections.electionEndTime)  && ((new Date().getTime() / 1000) > elections.electionStartTime)) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,30,0,0.95)]' style={{display:"inline-block"}}>Vote ongoing</div>)}
+       {((new Date().getTime() / 1000) > elections.electionEndTime) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>)}
+       {(elections.electionRegistrationEndTime > new Date().getTime() / 1000) && ((new Date().getTime() / 1000) > elections.electionRegistrationStartTime) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(90,90,0,0.95)]' style={{display:"inline-block"}}>Registration ongoing</div>)} 
+       {((new Date().getTime() / 1000) < elections.electionRegistrationStartTime) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,0,0,0.95)]' style={{display:"inline-block"}}>Upcoming</div>)}
       </div>
       <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
       <div>
@@ -552,87 +957,27 @@ export default function BallotBridgeHome() {
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Nigeria</div>
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{elections.electionCountry}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Nigerian presidential elections</div>
+        <div className='mt-[0.1cm] ml-[0.2cm]'>{elections.electionTitle}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      {/* <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Drug Baron <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div> */}
-      </div>
-      </div>
-      ))}
-      {/* <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/iebc.png)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
-      <div>
-        <img src='images/iebc.png' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>IEBC</span>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Kenya</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Kenyan presidential elections</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>William Ruto <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{new Date(elections.electionStartTime * 1000).getFullYear()}</div>
       </div>
       </div>
       </div>
-      <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/ecg.jpg)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,0,0,0.95)]' style={{display:"inline-block"}}>Upcoming</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
-      <div>
-        <img src='images/ecg.jpg' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>ECG</span>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Ghana</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Ghanaian presidential elections</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      {/* <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>William Ruto <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div> */}
-      {/* </div> */}
-      {/* </div> */}
-  
+      ))}  
     </div>
     </div>
     <div className='my-[0.5cm]'>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          1
+      {Array.from({ length: Math.ceil(allElections.length.toString() / PublicElectionsPerPage) }, (_, index) => (
+        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]' key={index} onClick={() => paginate(index + 1)}>
+          {index + 1}
         </button>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          2
-        </button>
+      ))}
     </div>
     </div>)}
 
@@ -640,42 +985,39 @@ export default function BallotBridgeHome() {
     (<div>
     <div className='mt-[1cm] text-center'>
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
+      {currentVoteOngoingElections.map((elections) => (
       <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/inec.png)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,30,0,0.95)]' style={{display:"inline-block"}}>72 hr : 54 min : 4 sec</div>
+      <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,30,0,0.95)]' style={{display:"inline-block"}}>Vote ongoing</div>
       </div>
       <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
       <div>
-        <img src='images/ineclogo.jpg' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>INEC</span>
+        <img src={elections.governingBodyCover} width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
+        <span className='uppercase ml-[0.2cm] font-[500]'>{elections.governingBody}</span>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Nigeria</div>
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{elections.electionCountry}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Nigerian presidential elections</div>
+        <div className='mt-[0.1cm] ml-[0.2cm]'>{elections.electionTitle}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      {/* <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Drug Baron <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div> */}
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{new Date(elections.electionStartTime * 1000).getFullYear()}</div>
       </div>
       </div>
+      </div>
+      ))}
     </div>
     </div>
     <div className='my-[0.5cm]'>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          1
+      {Array.from({ length: Math.ceil(allVoteOngoingElections.length.toString() / PublicElectionsPerPage) }, (_, index) => (
+        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]' key={index} onClick={() => paginate(index + 1)}>
+          {index + 1}
         </button>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          2
-        </button>
+      ))}
     </div>
     </div>)}
 
@@ -683,42 +1025,39 @@ export default function BallotBridgeHome() {
     (<div>
     <div className='mt-[1cm] text-center'>
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
+      {currentRegistrationOngoingElections.map((elections) => (
     <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/siec.jpg)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(90,90,0,0.95)]' style={{display:"inline-block"}}>Registration ongoing</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
+    <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+      <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(90,90,0,0.95)]' style={{display:"inline-block"}}>Registration ongoing</div>
+    </div>
+    <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
       <div>
-        <img src='images/siec.jpg' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>SIEC</span>
+        <img src={elections.governingBodyCover} width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
+        <span className='uppercase ml-[0.2cm] font-[500]'>{elections.governingBody}</span>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>South Africa</div>
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{elections.electionCountry}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>South African presidential elections</div>
+        <div className='mt-[0.1cm] ml-[0.2cm]'>{elections.electionTitle}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{new Date(elections.electionStartTime * 1000).getFullYear()}</div>
       </div>
-      {/* <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Mandela <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div> */}
       </div>
-      </div> 
+    </div> 
+      ))}
     </div>
     </div>
     <div className='my-[0.5cm]'>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          1
+      {Array.from({ length: Math.ceil(allRegistrationOngoingElections.length.toString() / PublicElectionsPerPage) }, (_, index) => (
+        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]' key={index} onClick={() => paginate(index + 1)}>
+          {index + 1}
         </button>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          2
-        </button>
+      ))}
     </div>
     </div>)}
 
@@ -726,42 +1065,39 @@ export default function BallotBridgeHome() {
     (<div>
     <div className='mt-[1cm] text-center'>
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
+      {currentUpcomingElections.map((elections) => (
     <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/ecg.jpg)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,0,0,0.95)]' style={{display:"inline-block"}}>Upcoming</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
+    <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+      <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,0,0,0.95)]' style={{display:"inline-block"}}>Upcoming</div>
+    </div>
+    <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
       <div>
-        <img src='images/ecg.jpg' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>ECG</span>
+        <img src={elections.governingBodyCover} width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
+        <span className='uppercase ml-[0.2cm] font-[500]'>{elections.governingBody}</span>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Ghana</div>
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{elections.electionCountry}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Ghanaian presidential elections</div>
+        <div className='mt-[0.1cm] ml-[0.2cm]'>{elections.electionTitle}</div>
       </div>
       <div className='mt-[0.3cm]'>
         <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      {/* <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>William Ruto <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div> */}
+        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{new Date(elections.electionStartTime * 1000).getFullYear()}</div>
       </div>
       </div>
+    </div>
+      ))}
     </div>
     </div>
     <div className='my-[0.5cm]'>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          1
+      {Array.from({ length: Math.ceil(allUpcomingElections.length.toString() / PublicElectionsPerPage) }, (_, index) => (
+        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]' key={index} onClick={() => paginate(index + 1)}>
+          {index + 1}
         </button>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          2
-        </button>
+      ))}
     </div>
     </div>)}
 
@@ -769,42 +1105,39 @@ export default function BallotBridgeHome() {
     (<div>
     <div className='mt-[1cm] text-center'>
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
+      {currentEndedElections.map((elections) => (
     <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/iebc.png)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
-      <div>
-        <img src='images/iebc.png' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>IEBC</span>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Kenya</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Kenyan presidential elections</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>William Ruto <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div>
-      </div>
-      </div>
+    <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+      <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>
+    </div>
+    <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
+    <div>
+      <img src={elections.governingBodyCover} width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
+      <span className='uppercase ml-[0.2cm] font-[500]'>{elections.governingBody}</span>
+    </div>
+    <div className='mt-[0.3cm]'>
+      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
+      <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{elections.electionCountry}</div>
+    </div>
+    <div className='mt-[0.3cm]'>
+      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
+      <div className='mt-[0.1cm] ml-[0.2cm]'>{elections.electionTitle}</div>
+    </div>
+    <div className='mt-[0.3cm]'>
+      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
+      <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{new Date(elections.electionStartTime * 1000).getFullYear()}</div>
+    </div>
+    </div>
+    </div>
+      ))}
     </div>
     </div>
     <div className='my-[0.5cm]'>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          1
+      {Array.from({ length: Math.ceil(allEndedElections.length.toString() / PublicElectionsPerPage) }, (_, index) => (
+        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]' key={index} onClick={() => paginate(index + 1)}>
+          {index + 1}
         </button>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          2
-        </button>
+      ))}
     </div>
     </div>)}
 
@@ -812,69 +1145,38 @@ export default function BallotBridgeHome() {
     (<div>
     <div className='mt-[1cm] text-center'>
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
+      {currentYourElections.map((elections) => (
     <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/inec.png)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,30,0,0.95)]' style={{display:"inline-block"}}>72 hr : 54 min : 4 sec</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
-      <div>
-        <img src='images/ineclogo.jpg' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>INEC</span>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Nigeria</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Nigerian presidential elections</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      {/* <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Drug Baron <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div> */}
-      </div>
-      </div>
-    <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/iebc.png)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
-      <div>
-        <img src='images/iebc.png' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>IEBC</span>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Kenya</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Kenyan presidential elections</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>William Ruto <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div>
-      </div>
-      </div>
+    <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[100%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+    </div>
+    <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
+    <div>
+      <img src={elections.governingBodyCover} width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
+      <span className='uppercase ml-[0.2cm] font-[500]'>{elections.governingBody}</span>
+    </div>
+    <div className='mt-[0.3cm]'>
+      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
+      <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{elections.electionCountry}</div>
+    </div>
+    <div className='mt-[0.3cm]'>
+      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
+      <div className='mt-[0.1cm] ml-[0.2cm]'>{elections.electionTitle}</div>
+    </div>
+    <div className='mt-[0.3cm]'>
+      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
+      <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{new Date(elections.electionStartTime * 1000).getFullYear()}</div>
+    </div>
+    </div>
+    </div>
+      ))}
     </div>
     </div>
     <div className='my-[0.5cm]'>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          1
+      {Array.from({ length: Math.ceil(allYourElections.length.toString() / PublicElectionsPerPage) }, (_, index) => (
+        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]' key={index} onClick={() => paginate(index + 1)}>
+          {index + 1}
         </button>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          2
-        </button>
+      ))}
     </div>
     </div>)}
 
@@ -882,42 +1184,39 @@ export default function BallotBridgeHome() {
     (<div>
     <div className='mt-[1cm] text-center'>
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
+      {currentSearchedElections.map((elections) => (
     <div className='grid-cols-1 mb-[0.5cm]'>
-      <div onClick={(e) => controlSingleElectionVisibility()} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:"url(/images/iebc.png)", backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-        <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>
-      </div>
-      <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
-      <div>
-        <img src='images/iebc.png' width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
-        <span className='uppercase ml-[0.2cm] font-[500]'>IEBC</span>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>Kenya</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
-        <div className='mt-[0.1cm] ml-[0.2cm]'>Kenyan presidential elections</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>2024</div>
-      </div>
-      <div className='mt-[0.3cm]'>
-        <div className='px-[0.2cm] py-[0.1cm] bg-[#d7b644] text-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Winner</div>
-        <div className='ml-[0.2cm]' style={{display:"inline-block"}}>William Ruto <img src='images/winner.png' width="25" style={{display:"inline-block"}} /></div>
-      </div>
-      </div>
-      </div>
+    <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+      <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>
+    </div>
+    <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
+  <div>
+    <img src={elections.governingBodyCover} width="25" className='rounded-[100%]' style={{display:"inline-block"}} />
+    <span className='uppercase ml-[0.2cm] font-[500]'>{elections.governingBody}</span>
+  </div>
+  <div className='mt-[0.3cm]'>
+    <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Country</div>
+    <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{elections.electionCountry}</div>
+  </div>
+  <div className='mt-[0.3cm]'>
+    <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Election</div>
+    <div className='mt-[0.1cm] ml-[0.2cm]'>{elections.electionTitle}</div>
+  </div>
+  <div className='mt-[0.3cm]'>
+    <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 1px 1px #333", display:"inline-block"}}>Year</div>
+    <div className='ml-[0.2cm]' style={{display:"inline-block"}}>{new Date(elections.electionStartTime * 1000).getFullYear()}</div>
+  </div>
+  </div>
+    </div>
+      ))}
     </div>
     </div>
     <div className='my-[0.5cm]'>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          1
+      {Array.from({ length: Math.ceil(allSearchedElections.length.toString() / PublicElectionsPerPage) }, (_, index) => (
+        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]' key={index} onClick={() => paginate(index + 1)}>
+          {index + 1}
         </button>
-        <button className='generalbutton bg-[#005] rounded-md px-[0.3cm] py-[0.1cm] mx-[0.2cm] text-[#fff]'>
-          2
-        </button>
+      ))}
     </div>
     </div>)}
 
@@ -1006,11 +1305,6 @@ export default function BallotBridgeHome() {
       <button className='py-[0.15cm] px-[0.3cm] bg-[#111] rounded-md mt-[0.5cm] electionbutton' onClick={(e) => uploadGoverningBodyLogo()}>Upload logo <img src="images/upload.png" width="18" style={{display:"inline-block"}} /></button> 
      </div>
      <div className='mt-[0.8cm]'>
-      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Governing body X (Twitter) handle</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Input X (Twitter) profile link of governing body' onChange={(e) => setGoverningBodyXlink(e.target.value)} style={{border:"2px solid #00f"}} /></div>
-     </div>
-     {/* <div>Date election was created will be passed in the javascript function using newdate.gettime</div> */}
-     <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election registration start date</div>
       <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input registration start date' onChange={(e) => setElectionRegStartDate(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
@@ -1026,18 +1320,7 @@ export default function BallotBridgeHome() {
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Voting end date</div>
       <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input voting end date' onChange={(e) => setVotingEndDate(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
-     {/* <div className='mt-[0.8cm]'>
-      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election availability</div>
-      <div className='mt-[0.5cm] ml-[0.2cm]'>
-        <input type="radio" name="availability" onClick={(e) => setElectionAvailability(true)} className='mr-[0.2cm]' style={{border:"2px solid #00f"}} />
-        <span>Public</span>
-      </div>
-      <div className='mt-[0.2cm] ml-[0.2cm]'>
-        <input type="radio" name="availability" onClick={(e) => setElectionAvailability(false)} className='mr-[0.2cm]' style={{border:"2px solid #00f"}} />
-        <span>Private</span>
-      </div>
-     </div> */}
-     <button className='py-[0.15cm] px-[0.3cm] bg-[#111] lg:mx-[5%] lg:w-[90%] w-[100%] rounded-md mt-[1cm] electionbutton' onClick={(e) => {e.preventDefault;createElection()}}>Create election <img src="images/plus-sign.png" width="37" style={{display:"inline-block"}} /></button>
+     <button className='py-[0.15cm] px-[0.3cm] bg-[#111] lg:mx-[5%] lg:w-[90%] w-[100%] rounded-md mt-[1cm] electionbutton' onClick={(e) => {e.preventDefault();createElection()}}>Create election <img src="images/plus-sign.png" width="37" style={{display:"inline-block"}} /></button>
     </div>
     </div>
    )}
@@ -1082,61 +1365,64 @@ export default function BallotBridgeHome() {
     </div>
     {singleElection.map((election) => (  
     <div>
-    <div className='p-[0.5cm] bg-[#001] text-center font-[500] text-[120%] uppercase' style={{borderBottom:"2px solid #222", textShadow:"2px 2px 2px #000"}}>{electionTitle} 2024 <img src="images/ballotpaper.png" width="25" className='ml-[0.2cm] mt-[-0.2cm]' style={{display:"inline-block"}} /></div>
+    <div className='p-[0.5cm] bg-[#001] text-center font-[500] text-[120%] uppercase' style={{borderBottom:"2px solid #222", textShadow:"2px 2px 2px #000"}}>{election[0][3]} {new Date(election[0][6].toString() * 1000).getFullYear()} <img src="images/ballotpaper.png" width="25" className='ml-[0.2cm] mt-[-0.2cm]' style={{display:"inline-block"}} /></div>
     {currentSingleElectionComponent === "defaultSingleElectionComponent" &&
     (<div className='lg:p-[1cm] p-[0.5cm]' style={{filter:singleElectionFilter}}>
 
      <div className="grid lg:grid-cols-3 grid-cols-1 gap-8">
       <div className='grid-cols-1'>
-        <img src="images/nigerianpresidential.jpg" className='w-[100%]' style={{border:"2px solid #333"}} />
+        <img src={election[0][5]} className='w-[100%]' style={{border:"2px solid #333"}} />
         <div className='mt-[0.3cm]'>
-          <img src="images/ineclogo.jpg" width="30" className='rounded-[100%]' style={{display:"inline-block", border:"2px solid #333"}} />
-          <span className='ml-[0.2cm] font-[500]'>INEC</span>
-          <span className='ml-[0.2cm] font-[500]'>Nigeria</span>
-          <Link href="https://x.com"><img src="images/xlogo.png" width="30" className='mt-[0.3cm]' /></Link>
+          <img src={election[0][16]} width="30" className='rounded-[100%] bg-[#000]' style={{display:"inline-block", border:"2px solid #333"}} />
+          <span className='ml-[0.2cm] font-[500]'>{election[0][15]}</span>
+          <span className='ml-[0.2cm] font-[500]'>{election[0][13]}</span>
         </div>
         <div className='mt-[0.3cm]'>
-          <button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlRegisterForElection()}>Register</button>
-          <button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlAddCandidate()}>Add a candidate</button>
-          {/* <button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton'>Remove a candidate</button> */}
-          <button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlUpdateElection()}>Update election</button>
-          {/* <button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton'>Publish election</button>
-          <button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton'>Unpublish election</button> */}
-          <button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton'>Close election</button>
-          <button className='px-[0.3cm] py-[0.15cm] bg-[rgba(0,30,0,0.95)] m-[0.2cm] rounded-md cursor-default'>72 hr : 54 min : 4 sec</button>
-          <button className='px-[0.3cm] py-[0.15cm] bg-[rgba(50,0,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Ended</button>
-          <button className='px-[0.3cm] py-[0.15cm] bg-[rgba(0,0,0,1)] m-[0.2cm] rounded-md cursor-default'>Upcoming</button>
-          <button className='px-[0.3cm] py-[0.15cm] bg-[rgba(90,90,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Registration ongoing</button>
+          {(new Date(election[0][12].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlRegisterForElection()}>Register</button>)}
+          {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlAddCandidate()}>Add a candidate</button>)}
+          {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlUpdateElection()}>Update election</button>)}
+          {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => {e.preventDefault(); closeElection()}}>Close election</button>)}
+          {((new Date(election[0][7].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && (new Date(election[0][6].toString() * 1000).toLocaleString() < new Date().toLocaleString())) && 
+          (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(0,30,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Vote ongoing</button>)}
+          {(new Date(election[0][7].toString() * 1000).toLocaleString() < new Date().toLocaleString()) && 
+          (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(50,0,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Ended</button>)}
+          {(new Date(election[0][11].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(0,0,0,1)] m-[0.2cm] rounded-md cursor-default'>Upcoming</button>)}
+          {((new Date(election[0][11].toString() * 1000).toLocaleString() < new Date().toLocaleString()) && (new Date(election[0][12].toString() * 1000).toLocaleString() > new Date().toLocaleString())) && 
+          (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(90,90,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Registration ongoing</button>)}
         </div>
       </div>
       <div className='grid-cols-1 lg:col-span-2 bg-[#000]' style={{border:"2px solid #333"}}>
       <div>
         <div className='bg-[#000] p-[0.3cm] font-[500]'>Election administrator <img src="images/admin2.png" width="25" className='ml-[0.1cm]' style={{display:"inline-block"}} /></div>
-        <div className='bg-[#222] p-[0.3cm]'>Atahiru Jega</div>
+        <div className='bg-[#222] p-[0.3cm]'>{election[0][2]}</div>
       </div>
       <div>
         <div className='bg-[#000] p-[0.3cm] font-[500]'>Election description <img src="images/description.png" width="18" className='ml-[0.2cm]' style={{display:"inline-block"}} /></div>
         <div className='bg-[#222] p-[0.3cm]'>
-        There are well-established mechanisms in place for the adjudication of electoral disputes, and we encourage any candidate or party seeking to challenge the outcome
-        to pursue redress through those mechanisms. We call on all parties, candidates, and supporters to refrain from violence or inflammatory rhetoric at this critical time.
+        {election[0][4]}
         </div>
       </div>
       <div>
         <div className='bg-[#000] p-[0.3cm] font-[500]'>Date of election creation <img src="images/calendar.png" width="18" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
-        <div className='bg-[#222] p-[0.3cm]'>25th Jan 2024 WAT 11:52 pm</div>
+        <div className='bg-[#222] p-[0.3cm]'>{new Date(election[0][10].toString() * 1000).toLocaleString()}</div>
       </div>
       <div>
         <div className='bg-[#000] p-[0.3cm] font-[500]'>Election registration start / end dates <img src="images/add-user.png" width="18" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
         <div className='bg-[#222] p-[0.3cm]'>
-          <div><span className='font-[500]'>Starts</span> - 20th February 2024 WAT 11:00 pm</div> 
-          <div><span className='font-[500]'>Ends</span> - 25th March 2024 WAT 11:00 pm</div>
+          <div><span className='font-[500]'>Starts</span> - {new Date(election[0][11].toString() * 1000).toLocaleString()}</div> 
+          <div><span className='font-[500]'>Ends</span> - {new Date(election[0][12].toString() * 1000).toLocaleString()}</div>
         </div>
       </div>
       <div>
         <div className='bg-[#000] p-[0.3cm] font-[500]'>Election voting start / end dates <img src="images/vote-ballot.png" width="25" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
         <div className='bg-[#222] p-[0.3cm]'>
-          <div><span className='font-[500]'>Starts</span> - 25th May 2024 WAT 07:00 am</div> 
-          <div><span className='font-[500]'>Ends</span> - 27th May 2024 WAT 12:00 pm</div>
+          <div><span className='font-[500]'>Starts</span> - {new Date(election[0][6].toString() * 1000).toLocaleString()}</div> 
+          <div><span className='font-[500]'>Ends</span> - {new Date(election[0][7].toString() * 1000).toLocaleString()}</div>
         </div>
       </div>
       </div>
@@ -1146,42 +1432,23 @@ export default function BallotBridgeHome() {
 
      <div>
       <div className='text-[110%] uppercase font-[500] text-center mb-[0.5cm]' style={{textShadow:"2px 2px 2px #000"}}>Vote for a candidate</div>
-      {/* <div className='text-[110%] uppercase font-[500] text-center mb-[1cm]' style={{textShadow:"2px 2px 2px #000"}}>Candidates</div> */}
-      <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8'>
-       <div className='grid-cols-1 mt-[0.5cm] bg-[#000]' style={{border:"2px solid #333"}}>
-        <img src="images/tinubu.jpg" width="200" className='lg:h-[7cm] md:h-[8cm] w-[100%]' />
-        <div className='p-[0.3cm]'>
-        <div className='font-[500]'>Chief Bola Ahmed Tinubu</div>
-        <div className='mt-[0.1cm]'><img src="images/flag.png" width="20" style={{display:"inline-block"}} /> APC</div>
-        <div className='mt-[0.1cm]'>Votes - 71,058,002</div>
-        <div className='mt-[0.3cm]'><img src="images/vote.png" width="40" className='fa-fade cursor-pointer' style={{display:"inline-block", animationDuration:"5s"}} /></div>
-        {/* <div className='mt-[0.3cm]'><img src="images/winner-logo.png" width="40" style={{display:"inline-block", animationDuration:"5s"}} /></div> */}
-        <div className='mt-[0.3cm] text-right'><span className='cursor-pointer'>Remove <img src="images/remove.png" width="15" style={{display:"inline-block"}} /></span></div>
-        </div>
-       </div> 
-       <div className='grid-cols-1 mt-[0.5cm] bg-[#000]' style={{border:"2px solid #333"}}>
-        <img src="images/peterobi.png" width="200" className='lg:h-[7cm] md:h-[8cm] w-[100%]' />
-        <div className='p-[0.3cm]'>
-        <div className='font-[500]'>Mr Peter Obi</div>
-        <div className='mt-[0.1cm]'><img src="images/flag.png" width="20" style={{display:"inline-block"}} /> LP</div>
-        <div className='mt-[0.1cm]'>Votes - 81,023,556</div>
-        <div className='mt-[0.3cm]'><img src="images/vote.png" width="40" className='fa-fade cursor-pointer' style={{display:"inline-block", animationDuration:"5s"}} /></div>
-        {/* <div className='mt-[0.3cm]'><img src="images/winner-logo.png" width="40" style={{display:"inline-block", animationDuration:"5s"}} /></div> */}
-        <div className='mt-[0.3cm] text-right'><span className='cursor-pointer'>Remove <img src="images/remove.png" width="15" style={{display:"inline-block"}} /></span></div>
-        </div>
-       </div> 
-       <div className='grid-cols-1 mt-[0.5cm] bg-[#000]' style={{border:"2px solid #333"}}>
-        <img src="images/atiku.jpg" width="200" className='lg:h-[7cm] md:h-[8cm] w-[100%]' />
-        <div className='p-[0.3cm]'>
-        <div className='font-[500]'>Alhaji Atiku Abubakar</div>
-        <div className='mt-[0.1cm]'><img src="images/flag.png" width="20" style={{display:"inline-block"}} /> PDP</div>
-        <div className='mt-[0.1cm]'>Votes - 21,000,174</div>
-        <div className='mt-[0.3cm]'><img src="images/vote.png" width="40" className='fa-fade cursor-pointer' style={{display:"inline-block", animationDuration:"5s"}} /></div>
-        {/* <div className='mt-[0.3cm]'><img src="images/winner-logo.png" width="40" style={{display:"inline-block", animationDuration:"5s"}} /></div> */}
-        <div className='mt-[0.3cm] text-right'><span className='cursor-pointer'>Remove <img src="images/remove.png" width="15" style={{display:"inline-block"}} /></span></div>
-        </div>
-       </div>       
+      {allTheCandidates.length.toString() > 0 ? 
+      (<div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8'>
+        {allTheCandidates.map((candidate) => (
+       <div key = {candidate.id} className='grid-cols-1 mt-[0.5cm] bg-[#000]' style={{border:"2px solid #333"}}>
+       <img src={candidate.candidatePhoto} width="200" className='lg:h-[7cm] md:h-[8cm] w-[100%]' />
+       <div className='p-[0.3cm]'>
+       <div className='font-[500]'>{candidate.name}</div>
+       <div className='mt-[0.1cm]'><img src="images/flag.png" width="20" style={{display:"inline-block"}} /> {candidate.politicalParty}</div>
+       <div className='mt-[0.1cm]'>Votes - {candidate.voteCount}</div>
+       <div className='mt-[0.3cm]'><img src="images/vote.png" width="40" onClick={(e) => voteForCandidate(candidate.id)} className='fa-fade cursor-pointer' style={{display:"inline-block", animationDuration:"5s"}} /></div>
+       {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+       (<div className='mt-[0.3cm] text-right'><span className='cursor-pointer' onClick={(e) => removeCandidate(candidate.id)}>Remove <img src="images/remove.png" width="15" style={{display:"inline-block"}} /></span></div>)}
        </div>
+      </div>
+        ))}      
+       </div>) : 
+       (<div className='mt-[1cm] text-center text-[120%] text-[#ccc]'>This election has no candidates!</div>)}
       </div> 
     </div>)}
     </div>
@@ -1193,7 +1460,7 @@ export default function BallotBridgeHome() {
       <div className='lg:p-[1cm] p-[0.5cm]'>
       <div className=''>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Candidate's name</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Type name of election candidate' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' onChange={(e) => setCandidateName(e.target.value)} placeholder='Type name of election candidate' style={{border:"2px solid #00f"}} /></div>
       </div>
       <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Candidate's portrait</div>
@@ -1207,9 +1474,9 @@ export default function BallotBridgeHome() {
      </div>
       <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Candidate's political party</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder="Type candidate's political party e.g LP" style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' onChange={(e) => setCandidateParty(e.target.value)} placeholder="Type candidate's political party e.g LP" style={{border:"2px solid #00f"}} /></div>
       </div>
-      <button className='py-[0.3cm] px-[0.3cm] bg-[#111] w-[100%] rounded-md mt-[1cm] electionbutton'>Add candidate now <img src="images/candidate.png" width="17" className='mt-[-0.1cm] ml-[0.1cm]' style={{display:"inline-block"}} /></button>
+      <button className='py-[0.3cm] px-[0.3cm] bg-[#111] w-[100%] rounded-md mt-[1cm] electionbutton' onClick={(e) => {e.preventDefault(); addTheCandidate()}}>Add candidate now <img src="images/candidate.png" width="17" className='mt-[-0.1cm] ml-[0.1cm]' style={{display:"inline-block"}} /></button>
       </div>
      </div>)}
 
@@ -1217,13 +1484,17 @@ export default function BallotBridgeHome() {
     (<div>
       <div className='py-[0.3cm] px-[0.5cm] bg-[#111] text-center font-[500] text-[105%]' style={{borderBottom:"2px solid #222", textShadow:"2px 2px 2px #000"}}>Update election  <img src="images/remove.png" width="22" className='float-right normalbutton cursor-pointer' onClick={(e) => resetControlUpdateElection()} style={{display:"inline-block"}} /></div>
       <div className='lg:p-[1cm] p-[0.5cm]'>
-     <div>
+      <div>
+      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Administrator's name</div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Update full name' onChange={(e) => setAdministratorName(e.target.value)} style={{border:"2px solid #00f"}} /></div>
+     </div>
+     <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election title</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Nigerian presidential elections' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Nigerian presidential elections' onChange={(e) => setElectionTitle(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election description</div>
-      <div className='mt-[0.5cm]'><textarea className='px-[0.2cm] py-[0.25cm] h-[3cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#3333]' placeholder='Please give the election a description' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><textarea className='px-[0.2cm] py-[0.25cm] h-[3cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#3333]' placeholder='Please give the election a description' onChange={(e) => setElectionDescription(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election cover photo</div>
@@ -1252,7 +1523,7 @@ export default function BallotBridgeHome() {
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election governing body</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Please type name of election governing body e.g INEC' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Please type name of election governing body e.g INEC' onChange={(e) => setGoverningBody(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election governing body logo</div>
@@ -1265,38 +1536,14 @@ export default function BallotBridgeHome() {
       <button className='py-[0.15cm] px-[0.3cm] bg-[#111] rounded-md mt-[0.5cm] electionbutton' onClick={(e) => uploadGoverningBodyLogo()}>Upload logo <img src="images/upload.png" width="18" style={{display:"inline-block"}} /></button> 
      </div>
      <div className='mt-[0.8cm]'>
-      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Governing body X (Twitter) handle</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Input X (Twitter) profile link of governing body' style={{border:"2px solid #00f"}} /></div>
-     </div>
-     {/* <div>Date election was created will be passed in the javascript function using newdate.gettime</div> */}
-     <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election registration start date</div>
-      <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input registration start date' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input registration start date' onChange={(e) => setElectionRegStartDate(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election registration end date</div>
-      <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input registration end date' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input registration end date' onChange={(e) => setElectionRegEndDate(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
-     <div className='mt-[0.8cm]'>
-      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Voting start date</div>
-      <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input voting start date' style={{border:"2px solid #00f"}} /></div>
-     </div>
-     <div className='mt-[0.8cm]'>
-      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Voting end date</div>
-      <div className='mt-[0.5cm]'><input type="datetime-local" className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Input voting end date' style={{border:"2px solid #00f"}} /></div>
-     </div>
-     <div className='mt-[0.8cm]'>
-      <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election availability</div>
-      <div className='mt-[0.5cm] ml-[0.2cm]'>
-        <input type="radio" name="availability" className='mr-[0.2cm]' style={{border:"2px solid #00f"}} />
-        <span>Public</span>
-      </div>
-      <div className='mt-[0.2cm] ml-[0.2cm]'>
-        <input type="radio" name="availability" className='mr-[0.2cm]' style={{border:"2px solid #00f"}} />
-        <span>Private</span>
-      </div>
-      <button className='py-[0.3cm] px-[0.3cm] bg-[#111] lg:mx-[5%] lg:w-[90%] w-[100%] rounded-md mt-[1cm] electionbutton'>Update election <img src="images/update.png" width="20" className="mt-[-0.1cm]" style={{display:"inline-block"}} /></button>
-      </div>
+      <button className='py-[0.3cm] px-[0.3cm] bg-[#111] lg:mx-[5%] lg:w-[90%] w-[100%] rounded-md mt-[1cm] electionbutton' onClick={(e) => {e.preventDefault(); updateTheElection()}}>Update election <img src="images/update.png" width="20" className="mt-[-0.1cm]" style={{display:"inline-block"}} /></button>
       </div>
     </div>)}
 

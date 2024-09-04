@@ -361,11 +361,6 @@ const electionContractABI = [
       },
       {
         internalType: "string",
-        name: "link",
-        type: "string",
-      },
-      {
-        internalType: "string",
         name: "country",
         type: "string",
       },
@@ -426,6 +421,11 @@ const electionContractABI = [
       {
         components: [
           {
+            internalType: "uint256",
+            name: "electionID",
+            type: "uint256",
+          },
+          {
             internalType: "address",
             name: "admin",
             type: "address",
@@ -498,11 +498,6 @@ const electionContractABI = [
           {
             internalType: "string",
             name: "governingBody",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "governingBodyTwitterLink",
             type: "string",
           },
           {
@@ -544,131 +539,138 @@ const electionContractABI = [
       {
         components: [
           {
-            internalType: "address",
-            name: "admin",
-            type: "address",
+            components: [
+              {
+                internalType: "uint256",
+                name: "electionID",
+                type: "uint256",
+              },
+              {
+                internalType: "address",
+                name: "admin",
+                type: "address",
+              },
+              {
+                internalType: "string",
+                name: "adminName",
+                type: "string",
+              },
+              {
+                internalType: "string",
+                name: "electionTitle",
+                type: "string",
+              },
+              {
+                internalType: "string",
+                name: "electionDescription",
+                type: "string",
+              },
+              {
+                internalType: "string",
+                name: "electionCoverPhoto",
+                type: "string",
+              },
+              {
+                internalType: "uint256",
+                name: "electionStartTime",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "electionEndTime",
+                type: "uint256",
+              },
+              {
+                internalType: "bool",
+                name: "hasStarted",
+                type: "bool",
+              },
+              {
+                internalType: "bool",
+                name: "hasEnded",
+                type: "bool",
+              },
+              {
+                internalType: "uint256",
+                name: "electionTimeCreated",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "electionRegistrationStartTime",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "electionRegistrationEndTime",
+                type: "uint256",
+              },
+              {
+                internalType: "string",
+                name: "electionCountry",
+                type: "string",
+              },
+              {
+                internalType: "bool",
+                name: "electionAvailability",
+                type: "bool",
+              },
+              {
+                internalType: "string",
+                name: "governingBody",
+                type: "string",
+              },
+              {
+                internalType: "string",
+                name: "governingBodyCover",
+                type: "string",
+              },
+            ],
+            internalType: "struct BallotBridge.ElectionDetails",
+            name: "details",
+            type: "tuple",
           },
           {
-            internalType: "string",
-            name: "adminName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "electionTitle",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "electionDescription",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "electionCoverPhoto",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "electionStartTime",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "electionEndTime",
-            type: "uint256",
-          },
-          {
-            internalType: "bool",
-            name: "hasStarted",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "hasEnded",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
-            name: "electionTimeCreated",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "electionRegistrationStartTime",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "electionRegistrationEndTime",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "electionCountry",
-            type: "string",
-          },
-          {
-            internalType: "bool",
-            name: "electionAvailability",
-            type: "bool",
-          },
-          {
-            internalType: "string",
-            name: "governingBody",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "governingBodyTwitterLink",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "governingBodyCover",
-            type: "string",
+            components: [
+              {
+                internalType: "uint256",
+                name: "id",
+                type: "uint256",
+              },
+              {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
+                internalType: "string",
+                name: "politicalParty",
+                type: "string",
+              },
+              {
+                internalType: "uint256",
+                name: "addedTime",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "voteCount",
+                type: "uint256",
+              },
+              {
+                internalType: "string",
+                name: "candidatePhoto",
+                type: "string",
+              },
+            ],
+            internalType: "struct BallotBridge.Candidate[]",
+            name: "candidates",
+            type: "tuple[]",
           },
         ],
-        internalType: "struct BallotBridge.ElectionDetails[]",
+        internalType: "struct BallotBridge.ElectionData[]",
         name: "",
         type: "tuple[]",
-      },
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "id",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "politicalParty",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "addedTime",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "voteCount",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "candidatePhoto",
-            type: "string",
-          },
-        ],
-        internalType: "struct BallotBridge.Candidate[][]",
-        name: "",
-        type: "tuple[][]",
       },
     ],
     stateMutability: "view",
@@ -794,6 +796,11 @@ const electionContractABI = [
       {
         components: [
           {
+            internalType: "uint256",
+            name: "electionID",
+            type: "uint256",
+          },
+          {
             internalType: "address",
             name: "admin",
             type: "address",
@@ -866,11 +873,6 @@ const electionContractABI = [
           {
             internalType: "string",
             name: "governingBody",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "governingBodyTwitterLink",
             type: "string",
           },
           {
@@ -1159,11 +1161,6 @@ const electionContractABI = [
       },
       {
         internalType: "string",
-        name: "link",
-        type: "string",
-      },
-      {
-        internalType: "string",
         name: "country",
         type: "string",
       },
@@ -1208,7 +1205,7 @@ const electionContractABI = [
   },
 ];
 
-const electionContractAddress = "0x4a16834828a148371a5cbf41340b6bdbb313aa4d";
+const electionContractAddress = "0xf2100f6a5bb626e89331d7ffcf6e5a32c25c3ad6";
 
 module.exports = {
   electionContractAddress,
