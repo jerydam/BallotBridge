@@ -371,7 +371,13 @@ export default function BallotBridgeHome() {
            const electionContractReadSettings = new Contract(electionContractAddress, electionContractABI, ethersProvider)       
          try {
           const showallelections = await electionContractReadSettings.getAllElections()
-          const electionsArray = showallelections.map(election => {
+          const electionsArray = showallelections
+          .filter(election => {
+            const { details } = election;
+            const electionAvailability = details[14];
+            return electionAvailability == true;
+          })
+          .map(election => {
             const { details } = election;
             return {
               electionID: Number(details[0]),
@@ -419,7 +425,8 @@ export default function BallotBridgeHome() {
             const { details } = election;
             const electionStartTime = Number(details[6]);
             const electionEndTime = Number(details[7]);
-            return currentTime < electionEndTime & currentTime > electionStartTime;
+            const electionAvailability = details[14];
+            return currentTime < electionEndTime & currentTime > electionStartTime & electionAvailability == true;
           })
           .map(election => {
             const { details } = election;
@@ -469,7 +476,8 @@ export default function BallotBridgeHome() {
             const { details } = election;
             const electionRegistrationStartTime = Number(details[11]);
             const electionRegistrationEndTime = Number(details[12]);
-            return currentTime > electionRegistrationStartTime & currentTime < electionRegistrationEndTime;
+            const electionAvailability = details[14];
+            return currentTime > electionRegistrationStartTime & currentTime < electionRegistrationEndTime & electionAvailability == true;
           })
           .map(election => {
             const { details } = election;
@@ -518,7 +526,8 @@ export default function BallotBridgeHome() {
           .filter(election => {
             const { details } = election;
             const electionRegistrationStartTime = Number(details[11]);
-            return currentTime < electionRegistrationStartTime;
+            const electionAvailability = details[14];
+            return (currentTime < electionRegistrationStartTime) & electionAvailability == true;
           })
           .map(election => {
             const { details } = election;
@@ -567,7 +576,8 @@ export default function BallotBridgeHome() {
           .filter(election => {
             const { details } = election;
             const electionEndTime = Number(details[7]);
-            return currentTime > electionEndTime;
+            const electionAvailability = details[14]
+            return (currentTime > electionEndTime) & electionAvailability == true;
           })
           .map(election => {
             const { details } = election;
@@ -616,7 +626,8 @@ export default function BallotBridgeHome() {
           .filter(election => {
             const { details } = election;
             const admin = Number(details[1]);
-            return address == admin;
+            const electionAvailability = details[14]
+            return address == admin & electionAvailability == true
           })
           .map(election => {
             const { details } = election;
@@ -680,8 +691,9 @@ export default function BallotBridgeHome() {
             const electionTitle = details[3];
             const electionDescription = details[4]
             const electionCountry = details[13]
+            const electionAvailability = details[14]
             const governingBody = details[15]
-            return electionTitle.toLowerCase().includes(searchQuery.toLowerCase()) || electionDescription.toLowerCase().includes(searchQuery.toLowerCase()) || electionCountry.toLowerCase() == searchQuery.toLowerCase() || governingBody.toLowerCase() == searchQuery.toLowerCase();
+            return electionTitle.toLowerCase().includes(searchQuery.toLowerCase()) || electionDescription.toLowerCase().includes(searchQuery.toLowerCase()) || electionCountry.toLowerCase() == searchQuery.toLowerCase() || governingBody.toLowerCase() == searchQuery.toLowerCase() & electionAvailability == true;
           })
           .map(election => {
             const { details } = election;
@@ -851,7 +863,7 @@ export default function BallotBridgeHome() {
            }
           }
         }
-
+        
           //function to remove a candidate
          const removeCandidate = async (candidateid) => {
           if(isConnected){
@@ -870,6 +882,72 @@ export default function BallotBridgeHome() {
            }
           }
         }
+
+          //function to generate OTP a candidate
+          const [showGenerateOTPbutton, setShowGenerateOTPbutton] = useState(true)
+          const generateOTP = async () => {
+            if(isConnected){
+             setLoading(true) 
+             const ethersProvider = new BrowserProvider(walletProvider) 
+             const signer = await ethersProvider.getSigner()
+             const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+             try {
+              const generateotp = await electionContractWriteSettings.generateRandomNumber();
+              setShowGenerateOTPbutton(false)
+             } catch (error) {
+              console.log(error)
+              setLoading(false)
+             }
+             finally {
+              setLoading(false)
+             }
+            }
+          }
+
+          //function to receive OTP
+          const [receivedOTP, setReceivedOTP] = useState()
+          const receiveOTP = async () => {
+            if(isConnected){
+             setLoading(true) 
+             const ethersProvider = new BrowserProvider(walletProvider) 
+             const signer = await ethersProvider.getSigner()
+             const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+             try {
+              const receiveotp = await electionContractWriteSettings.getGeneratedNumbers();
+              const otpToSend = receiveotp[receiveotp.length - 1][0]
+              setReceivedOTP(otpToSend.toString())
+             } catch (error) {
+              console.log(error)
+              setLoading(false)
+             }
+             finally {
+              setLoading(false)
+             }
+            }
+          }
+
+          //function to register for election
+          const [phoneNumber, setPhoneNumber] = useState()
+          const [OTP, setOTP] = useState()
+          const registerForElection = async () => {
+            if(isConnected){
+             setLoading(true) 
+             const ethersProvider = new BrowserProvider(walletProvider) 
+             const signer = await ethersProvider.getSigner()
+             const electionContractWriteSettings = new Contract(electionContractAddress, electionContractABI, signer)
+             const regTime = Math.floor(new Date().getTime() / 1000)
+             try {
+              const registerforelection = await electionContractWriteSettings.registerVoter(clickedElectionID, address, OTP, phoneNumber, regTime);
+              resetControlRegisterForElection();
+             } catch (error) {
+              console.log(error)
+              setLoading(false)
+             }
+             finally {
+              setLoading(false)
+             }
+            }
+          }
 
             // pagination for all public elections
             const [currentAllElectionsPage, setcurrentAllElectionsPage] = useState(1);
@@ -1147,7 +1225,15 @@ export default function BallotBridgeHome() {
     <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4'>
       {currentYourElections.map((elections) => (
     <div className='grid-cols-1 mb-[0.5cm]'>
-    <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[100%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+    <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
+    {(((new Date().getTime() / 1000) < elections.electionEndTime)  && ((new Date().getTime() / 1000) > elections.electionStartTime)) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,30,0,0.95)]' style={{display:"inline-block"}}>Vote ongoing</div>)}
+       {((new Date().getTime() / 1000) > elections.electionEndTime) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>)}
+       {(elections.electionRegistrationEndTime > new Date().getTime() / 1000) && ((new Date().getTime() / 1000) > elections.electionRegistrationStartTime) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(90,90,0,0.95)]' style={{display:"inline-block"}}>Registration ongoing</div>)} 
+       {((new Date().getTime() / 1000) < elections.electionRegistrationStartTime) &&
+      (<div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,0,0,0.95)]' style={{display:"inline-block"}}>Upcoming</div>)}
     </div>
     <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
     <div>
@@ -1490,11 +1576,11 @@ export default function BallotBridgeHome() {
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election title</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Nigerian presidential elections' onChange={(e) => setElectionTitle(e.target.value)} style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Update election title' onChange={(e) => setElectionTitle(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election description</div>
-      <div className='mt-[0.5cm]'><textarea className='px-[0.2cm] py-[0.25cm] h-[3cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#3333]' placeholder='Please give the election a description' onChange={(e) => setElectionDescription(e.target.value)} style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><textarea className='px-[0.2cm] py-[0.25cm] h-[3cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#3333]' placeholder='Please update the election description' onChange={(e) => setElectionDescription(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election cover photo</div>
@@ -1523,7 +1609,7 @@ export default function BallotBridgeHome() {
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election governing body</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Please type name of election governing body e.g INEC' onChange={(e) => setGoverningBody(e.target.value)} style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[80%] w-[100%] outline-[#333]' placeholder='Please update name of election governing body e.g INEC' onChange={(e) => setGoverningBody(e.target.value)} style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Election governing body logo</div>
@@ -1553,16 +1639,20 @@ export default function BallotBridgeHome() {
       <div className='lg:p-[1cm] p-[0.5cm]'>
       <div>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Phone number</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Please input phone number e.g +2348169023301' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' onChange={(e) => setPhoneNumber(e.target.value)} placeholder='Please input phone number e.g +2348169023301' style={{border:"2px solid #00f"}} /></div>
      </div>
      <div className='mt-[0.8cm]'>
       <div className='px-[0.2cm] py-[0.1cm] bg-[#000] rounded-md' style={{boxShadow:"2px 2px 2px 2px #333", display:"inline-block"}}>Your wallet address</div>
-      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='0x82aD97bEf0b7E17b1D30f56e592Fc819E1eeDAfc' style={{border:"2px solid #00f"}} /></div>
+      <div className='mt-[0.5cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' value={address} style={{border:"2px solid #00f"}} /></div>
      </div>
-     <div><button className='py-[0.15cm] px-[0.3cm] bg-[#002] rounded-md mt-[0.8cm] electionbutton' style={{border:"2px solid #999"}}>Generate OTP <img src="images/synchronize.png" width="25" className='mt-[-0.2cm]' style={{display:"inline-block"}} /></button></div>
-     <div><button className='py-[0.15cm] px-[0.3cm] bg-[#002] rounded-md mt-[0.8cm] electionbutton' style={{border:"2px solid #999"}}>Click to receive OTP <img src="images/show.png" width="20" className='mt-[-0.1cm]' style={{display:"inline-block"}} /></button></div>
-     <div className='mt-[0.8cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]' placeholder='Please input OTP here' style={{border:"2px solid #00f"}} /></div>
-     <button className='py-[0.25cm] px-[0.3cm] bg-[#111] lg:w-[100%] w-[100%] rounded-md mt-[1cm] electionbutton'>Register <img src="images/register.png" width="23" style={{display:"inline-block"}} /></button>
+     <div>
+      {showGenerateOTPbutton ? 
+      (<button className='py-[0.15cm] px-[0.3cm] bg-[#002] rounded-md mt-[0.8cm] electionbutton' style={{border:"2px solid #999"}} onClick={(e) => generateOTP()}>Generate OTP <img src="images/synchronize.png" width="25" className='mt-[-0.2cm]' style={{display:"inline-block"}} /></button>) :
+      (<span></span>)}
+    </div>
+     <div><button className='py-[0.15cm] px-[0.3cm] bg-[#002] rounded-md mt-[0.8cm] electionbutton' style={{border:"2px solid #999"}} onClick={(e) => receiveOTP()}>Click to receive OTP <img src="images/show.png" width="20" className='mt-[-0.1cm]' style={{display:"inline-block"}} /></button></div>
+     <div className='mt-[0.8cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]'onChange={(e) => setOTP(e.target.value)} placeholder='Please input OTP here' style={{border:"2px solid #00f"}} /></div>
+     <button className='py-[0.25cm] px-[0.3cm] bg-[#111] lg:w-[100%] w-[100%] rounded-md mt-[1cm] electionbutton' onClick={(e) => registerForElection()}>Register <img src="images/register.png" width="23" style={{display:"inline-block"}} /></button>
       </div>
     </div>)}
     </div>)
