@@ -2,21 +2,21 @@
 pragma solidity ^0.8.19;
 
 contract BallotBridge {
-    uint256 private secretCode;
+    uint256 private useless;
 
     constructor() {
-        secretCode = 326723; // Initialize the secret code
+        useless = 326723; 
         electionCount = 0;
     }
 
     // Data Structures
 
     struct Candidate {
-        uint256 id; // Unique ID for the candidate
+        uint256 id; 
         string name;
         string politicalParty;
         uint256 addedTime;
-        uint256 voteCount; // Track the number of votes
+        uint256 voteCount;
         string candidatePhoto;
     }
 
@@ -25,17 +25,17 @@ contract BallotBridge {
     bool isRegistered;
     bool hasVoted;
     uint256 votedCandidateId;
-    uint64 OTP;            // Added field for OTP
-    uint256 phoneNumber;   // Added field for phone number
-    uint256 timeRegister;  // Added field for time of registration
+    uint64 OTP;           
+    uint256 phoneNumber;  
+    uint256 timeRegister;  
 }
 struct Election {
     ElectionDetails details;
     Candidate[] candidates;
     mapping(address => Voter) voters;
     address[] voterList;
-    address[] votersWhoHaveVoted; // New array to keep track of voters who have voted
-    uint256 winnerId; // Track the winning candidate ID
+    address[] votersWhoHaveVoted; 
+    uint256 winnerId; 
 }
 
 
@@ -43,7 +43,7 @@ struct Election {
         uint256 electionID;
         address admin;
         string adminName;
-        string electionTitle; // Field name update to match
+        string electionTitle; 
         string electionDescription;
         string electionCoverPhoto;
         uint256 electionStartTime;
@@ -54,7 +54,7 @@ struct Election {
         uint256 electionRegistrationStartTime;
         uint256 electionRegistrationEndTime;
         string electionCountry;
-        bool electionAvailability; // Field name update to match
+        bool electionAvailability; 
         string governingBody;
         string governingBodyCover;
         
@@ -179,8 +179,8 @@ struct Election {
         string memory description,
         string memory coverPhoto,
         string memory governingBody,
-        string memory country, // Country of the election
-        string memory photo, // Governing body cover photo
+        string memory country, 
+        string memory photo, 
         uint256 registrationStart,
         uint256 registrationStop,
         uint256 electionStart,
@@ -229,8 +229,8 @@ struct Election {
         string memory description,
         string memory coverPhoto,
         string memory governingBody,
-        string memory country, // Country of the election
-        string memory photo, // Governing body cover photo
+        string memory country, 
+        string memory photo, 
         uint256 registrationStart,
         uint256 registrationStop
     ) public electionExists(electionId) onlyAdmin(electionId) {
@@ -395,6 +395,7 @@ struct Election {
     public 
     electionExists(electionId) 
 {
+    require(msg.sender == voterAddress, "you can't register for others");
     require(OTP == generatedNumbers[msg.sender][generatedNumbers[msg.sender].length - 1].number);
     require(block.timestamp >= elections[electionId].details.electionRegistrationStartTime, "Registration has not started.");
     require(block.timestamp <= elections[electionId].details.electionRegistrationEndTime, "Registration has ended.");
@@ -453,14 +454,12 @@ struct Election {
         candidateId
     );
 
-    // Check if election should automatically end after this vote
     if (block.timestamp >= election.details.electionEndTime) {
         election.details.hasEnded = true;
         emit ElectionEnded(electionId, block.timestamp);
         announceWinner(electionId);
     }
 }
-
 
 
     function getElectionDetails(uint256 electionId) 
@@ -522,7 +521,7 @@ function getCandidateInfo(uint256 electionId, uint256 candidateId)
 {
     Election storage election = elections[electionId];
     
-    // Check if the voter is registered in this election
+    
     require(election.voters[voterAddress].isRegistered, "Voter is not registered.");
 
     Voter memory voter = election.voters[voterAddress];
