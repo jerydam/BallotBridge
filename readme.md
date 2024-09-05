@@ -1,11 +1,12 @@
 **Ballot Bridge Overview**
 
+
 Ballot Bridge is a tool designed to make voting easy, secure, and fair by using blockchain technology. Imagine it as a digital system where elections can be held without the need for a central authority, ensuring that everything is transparent and tamper-proof.
 
 ### What Does Ballot Bridge Do?
 
 1. **Creating Elections:** 
-   - Anyone in charge of an election can set up a new one, giving it a name, description, and specific dates for when voting starts and ends.
+   - Anyone in charge of an election can set up a new one, giving it a name, add candidates, description, and specific dates for when voting starts and ends.
 
 2. **Registering Voters:**
    - Before voting, people need to sign up as voters. To ensure security, they verify their identity with a special code sent to them.
