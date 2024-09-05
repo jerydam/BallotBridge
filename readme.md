@@ -46,7 +46,7 @@ Note that you can't use the platform without connecting wallet. To connect walle
 
 ### Why Is It Important?
 
-[Ballot Bridge](https://ballotbridge.vercel.app/)  makes voting fair and transparent by eliminating the chance of cheating. Since everything is recorded on the blockchain, it’s secure and unchangeable, giving everyone confidence in the results. It’s a modern solution for organizing elections, ensuring that every vote is counted and that the process is clear and trustworthy.
+[BallotBridge](https://ballotbridge.vercel.app/)  makes voting fair and transparent by eliminating the chance of cheating. Since everything is recorded on the blockchain, it’s secure and unchangeable, giving everyone confidence in the results. It’s a modern solution for organizing elections, ensuring that every vote is counted and that the process is clear and trustworthy.
 
 BallotBridge uses a mix of blockchain and web development tools to create a decentralized application. Here’s a breakdown of the technologies used:
 
