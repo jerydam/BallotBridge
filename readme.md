@@ -69,4 +69,4 @@ BallotBridge uses a mix of blockchain and web development tools to create a dece
 ### **Deployment Link:**
 [smartcontract](https://sepolia-blockscout.lisk.com/address/0xee6d93ae79710c78fa3149c915b3819a30d629a8)
 
-[Website](https://ballotbridge.vercel.app/)
+[Web app](https://ballotbridge.vercel.app/)
