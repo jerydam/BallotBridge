@@ -3,7 +3,7 @@
 
 [BallotBridge](https://ballotbridge.vercel.app/) is a tool designed to make voting easy, secure, and fair by using blockchain technology. Imagine it as a digital system where elections can be held without the need for a central authority, ensuring that everything is transparent and tamper-proof.
 
-### What Does [Ballot Bridge](https://ballotbridge.vercel.app/) Do?
+### What Does [BallotBridge](https://ballotbridge.vercel.app/) Do?
 
 1. **Creating Elections:** 
 ![File](https://ipfs.filebase.io/ipfs/QmbFt962D27dwpMXQT94WcCqgg3124KEKt6iCjAihzRzsR)
@@ -64,6 +64,8 @@ BallotBridge uses a mix of blockchain and web development tools to create a dece
 - **JavaScript:** The primary language for front-end functionality and interaction.
 - **Tailwind CSS:** A CSS framework to design the front-end in a responsive and flexible way.
 - **Twilo API:** An API using for phone number verification
+
+*Note: In subsequent upgrades of the product and overall user experience, ZK technology will be integrated. The Twilio SMS API and NIN API will as well be implemented properly.*
 
 ### **Deployment Link:**
 [smartcontract](https://sepolia-blockscout.lisk.com/address/0xee6d93ae79710c78fa3149c915b3819a30d629a8)
