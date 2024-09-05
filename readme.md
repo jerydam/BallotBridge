@@ -1,5 +1,4 @@
-**Ballot Bridge Overview**
-[Web App](https://ballotbridge.vercel.app/) / [Demo Video](https://youtu.be/zVzt6g1CVs8?si=Av0CrL3Zv_vYHC1M)
+# Ballot Bridge Overview [Web App](https://ballotbridge.vercel.app/) / [Demo Video](https://youtu.be/zVzt6g1CVs8?si=Av0CrL3Zv_vYHC1M)
 ![File](https://ipfs.filebase.io/ipfs/QmYBTGnXtZiSvYJnq63YHcV9UmL6ex4VKaytQAgVacjkpZ)
 
 [BallotBridge](https://ballotbridge.vercel.app/) is a tool designed to make voting easy, secure, and fair by using blockchain technology. Imagine it as a digital system where elections can be held without the need for a central authority, ensuring that everything is transparent and tamper-proof.
@@ -25,7 +24,7 @@
    - Anyone can check the details of the election, like what it's about, who the candidates are, and who won. Only the creator of an election has administartive rights over it.
 
 ### How Does It Work?
-## Connect Wallet
+**Connect Wallet**
 ![File](https://ipfs.filebase.io/ipfs/QmaCYtfuue43qkkXhyE8D1adYjk9b2zJWjsrFjD3QVT4CF)
 Note that you can't use the platform without connecting wallet. To connect wallet, go to the [Web App](https://ballotbridge.vercel.app). For desktop, click on the "Connect Wallet" button on the upper right of the screen and choose your login method either with wallet or email. If you don't have a wallet installed already, the wallet connect window has links to download a wallet of your choice on your device's browser (Brave browser, Google Chrome, Opera browser, or Yandex browser all work fine). On mobile, simply download your desired EVM-compatible wallet and use its inbuilt browser to connect to BallotBridge. Connect your wallet by clicking on the "Connect wallet" button on the upper right of the screen. Ensure to change network to Lisk Sepolia test network from the wallet connect window. The display on the screen will change after connecting (typically, it shows your ETH balance and a substring of your connected wallet address).
 
