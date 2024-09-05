@@ -1,8 +1,8 @@
 **Ballot Bridge Overview**
 
-Ballot Bridge is a tool designed to make voting easy, secure, and fair by using blockchain technology. Imagine it as a digital system where elections can be held without the need for a central authority, ensuring that everything is transparent and tamper-proof.
+[Ballot Bridge](https://ballotbridge.vercel.app/) is a tool designed to make voting easy, secure, and fair by using blockchain technology. Imagine it as a digital system where elections can be held without the need for a central authority, ensuring that everything is transparent and tamper-proof.
 
-### What Does Ballot Bridge Do?
+### What Does [Ballot Bridge](https://ballotbridge.vercel.app/) Do?
 
 1. **Creating Elections:** 
    - Anyone in charge of an election can set up a new one, giving it a name, description, and specific dates for when voting starts and ends.
@@ -38,4 +38,26 @@ Ballot Bridge is a tool designed to make voting easy, secure, and fair by using 
 
 ### Why Is It Important?
 
-Ballot Bridge makes voting fair and transparent by eliminating the chance of cheating. Since everything is recorded on the blockchain, it’s secure and unchangeable, giving everyone confidence in the results. It’s a modern solution for organizing elections, ensuring that every vote is counted and that the process is clear and trustworthy.
+[Ballot Bridge](https://ballotbridge.vercel.app/)  makes voting fair and transparent by eliminating the chance of cheating. Since everything is recorded on the blockchain, it’s secure and unchangeable, giving everyone confidence in the results. It’s a modern solution for organizing elections, ensuring that every vote is counted and that the process is clear and trustworthy.
+
+BallotBridge uses a mix of blockchain and web development tools to create a decentralized application. Here’s a breakdown of the technologies used:
+
+### **Smart Contract Tools:**
+- **Solidity:** The programming language used to write the smart contracts that run on the blockchain.
+- **Foundry:** A development tool used to test, deploy, and interact with smart contracts.
+
+### **Front-End and Integration Tools:**
+- **Web3Modal:** Provides a simple way for users to connect their crypto wallets.
+- **Ethers.js:** A JavaScript library to interact with the blockchain and execute transactions.
+- **Lisk Testnet Token Tracker:** Tracks tokens on the Lisk testnet, used for testing purposes.
+- **Filebase AWS IPFS SDK:** A tool to store files on a decentralized storage network using IPFS (InterPlanetary File System).
+- **Next.js:** A React-based framework used to build the user interface of the application.
+- **Node.js:** A backend JavaScript runtime environment used for server-side operations.
+- **JavaScript:** The primary language for front-end functionality and interaction.
+- **Tailwind CSS:** A CSS framework to design the front-end in a responsive and flexible way.
+- **Twilo API:** An API using for phone number verification
+
+### **Deployment Link:**
+[smartcontract](https://sepolia-blockscout.lisk.com/address/0xee6d93ae79710c78fa3149c915b3819a30d629a8)
+
+[Website](https://ballotbridge.vercel.app/)
