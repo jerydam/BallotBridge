@@ -5,7 +5,7 @@
 ### What Does [Ballot Bridge](https://ballotbridge.vercel.app/) Do?
 
 1. **Creating Elections:** 
-   - Anyone in charge of an election can set up a new one, giving it a name, description, and specific dates for when voting starts and ends.
+   - Anyone in charge of an election can set up a new one, giving it a name, add candidates, description, and specific dates for when voting starts and ends.
 
 2. **Registering Voters:**
    - Before voting, people need to sign up as voters. To ensure security, they verify their identity with a special code sent to them.

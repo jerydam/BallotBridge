@@ -1,4 +1,4 @@
-// NFT contract settings
+// election contract settings
 const electionContractABI = [
   {
     inputs: [],
@@ -1205,7 +1205,7 @@ const electionContractABI = [
   },
 ];
 
-const electionContractAddress = "0xf2100f6a5bb626e89331d7ffcf6e5a32c25c3ad6";
+const electionContractAddress = "0xee6d93ae79710c78fa3149c915b3819a30d629a8";
 
 module.exports = {
   electionContractAddress,
