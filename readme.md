@@ -65,7 +65,7 @@ BallotBridge uses a mix of blockchain and web development tools to create a dece
 - **Tailwind CSS:** A CSS framework to design the front-end in a responsive and flexible way.
 - **Twilo API:** An API using for phone number verification
 
-*Note: In subsequent upgrades of the product and overall user experience, ZK technology will be integrated. The Twilio SMS API and NIN API will as well be implemented properly.*
+*Note: In subsequent upgrades of the product and overall user experience, ZK technology will be integrated. The Twilio SMS API and NIN API will as well be implemented properly to ensure more strict fairness in the voting process.*
 
 ### **Deployment Link:**
 [smartcontract](https://sepolia-blockscout.lisk.com/address/0xee6d93ae79710c78fa3149c915b3819a30d629a8)
