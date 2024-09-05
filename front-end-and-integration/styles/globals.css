@@ -31,7 +31,13 @@ body{background: #000; color: #fff;}
 .electionbutton{transition: 0.3s ease-in-out;}
 .electionbutton:hover{background-color: #000; box-shadow: 1px 1px 2px 1px #fff;}
 
-.hometimeout{transform: translate3d(0,200%,0); transition:0.5s ease-in-out; width:80%}
+@media screen and (max-width:1007px) {
+  .hometimeout{transform: translate3d(0,200%,0); transition:0.5s ease-in-out; width:80%}
+}
+
+@media screen and (min-width:1007px) {
+  .hometimeout{transform: translate3d(0,150%,0); transition:0.5s ease-in-out; width:80%}
+}
 
 .homeelectiondiv{transition: 0.3s ease-in-out;}
 .homeelectiondiv:hover{transform: scale3d(0.95,0.95,0.95);}
