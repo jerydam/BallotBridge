@@ -949,6 +949,43 @@ export default function BallotBridgeHome() {
             }
           }
 
+  //function to send phone number and OTP to Twilio sms service for verification
+const sendCodeToTwilio = async () => {
+  if (isConnected) {
+    setLoading(true);
+
+    console.log("Sending OTP:", receivedOTP);
+    console.log("Sending phone number:", phoneNumber);
+
+    try {
+      const response = await fetch('/api/otpfunction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          OTP: receivedOTP,
+          phone: phoneNumber,
+        }),
+      });
+
+      if (response.ok) {
+        alert("OTP sent successfully!");
+      } else {
+        console.log("Unexpected response status:", response.status);
+        const errorResponse = await response.json();
+        console.log("Error details:", errorResponse);
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+};
+
+
+
             // pagination for all public elections
             const [currentAllElectionsPage, setcurrentAllElectionsPage] = useState(1);
             const PublicElectionsPerPage = 12;
@@ -1323,10 +1360,12 @@ export default function BallotBridgeHome() {
         <img src="images/help.png" width="40" className='mx-[auto] electionmenuimage' /> 
       </div>
       </Link>
+      <Link href="https://github.com/jerydam/BallotBridge/blob/main/readme.md">
       <div className='lg:mx-[1cm] mx-[0.5cm] cursor-pointer electionmenudiv text-center rounded-xl' style={{display:"inline-block"}}>
         <div className='bg-[rgba(40,40,40,0.95)] rounded-full py-[0.1cm] px-[0.4cm] electionmenuoption absolute ml-[-0.38cm]' style={{border:"1px solid #555"}}>Docs</div>
         <img src="images/docs.png" width="40" className='mx-[auto] electionmenuimage' /> 
       </div>
+      </Link>
     </div>
     </div>)
      }
@@ -1423,18 +1462,26 @@ export default function BallotBridgeHome() {
      <div style={{border:"2px solid #222"}}>
      <div style={{borderBottom:"2px solid #222"}}>
       {instruction1 === false ? 
-      (<div onClick={(e) => setInstruction1(true)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'><img src="images/asterisk.png" width="17" className='mr-[0.2cm] mt-[-0.05cm]' style={{display:"inline-block"}} /> Voter registeration for an election <img src="images/add.png" width="17" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>) :
+      (<div onClick={(e) => setInstruction1(true)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'><img src="images/asterisk.png" width="17" className='mr-[0.2cm] mt-[-0.05cm]' style={{display:"inline-block"}} /> Creating Elections <img src="images/add.png" width="17" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>) :
       (<div>
-      <div onClick={(e) => setInstruction1(false)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'>Voter registeration for an election <img src="images/delete.png" width="20" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
-      <div className='p-[0.5cm] bg-[#111] text-[#fff]'>Come out and register for the election</div>
+      <div onClick={(e) => setInstruction1(false)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'>Creating Elections <img src="images/delete.png" width="20" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
+      <div className='p-[0.5cm] bg-[#111] text-[#fff]'>Anyone in charge of an election can set up a new one, giving it a name, description, and specific dates for when voting starts and ends.</div>
+      </div>)}
+     </div>
+     <div style={{borderBottom:"2px solid #222"}}>
+      {instruction2 === false ? 
+      (<div onClick={(e) => setInstruction2(true)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'><img src="images/asterisk.png" width="17" className='mr-[0.2cm] mt-[-0.05cm]' style={{display:"inline-block"}} /> Registering Voters <img src="images/add.png" width="17" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>) :
+      (<div>
+      <div onClick={(e) => setInstruction2(false)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'>Registering Voters<img src="images/delete.png" width="20" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
+      <div className='p-[0.5cm] bg-[#111] text-[#fff]'>Before voting, people need to sign up as voters. To ensure security, they verify their identity with a special code sent to them. </div>
       </div>)}
      </div>
      <div>
-      {instruction2 === false ? 
-      (<div onClick={(e) => setInstruction2(true)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'><img src="images/asterisk.png" width="17" className='mr-[0.2cm] mt-[-0.05cm]' style={{display:"inline-block"}} /> Vote for a candidate <img src="images/add.png" width="17" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>) :
+      {instruction3 === false ? 
+      (<div onClick={(e) => setInstruction3(true)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'><img src="images/asterisk.png" width="17" className='mr-[0.2cm] mt-[-0.05cm]' style={{display:"inline-block"}} /> Casting Votes <img src="images/add.png" width="17" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>) :
       (<div>
-      <div onClick={(e) => setInstruction2(false)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'>Vote for a candidate <img src="images/delete.png" width="20" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
-      <div className='p-[0.5cm] bg-[#111] text-[#fff]'>I know you don't want to vote for a drug baron </div>
+      <div onClick={(e) => setInstruction3(false)} className='p-[0.5cm] bg-[#000] text-[#fff] cursor-pointer'>Casting Votes<img src="images/delete.png" width="20" className='ml-[0.2cm] mt-[-0.1cm]' style={{display:"inline-block"}} /></div>
+      <div className='p-[0.5cm] bg-[#111] text-[#fff]'>Once registered, voters can choose their preferred candidate during the election period</div>
       </div>)}
      </div>
      </div>
@@ -1650,7 +1697,8 @@ export default function BallotBridgeHome() {
       (<button className='py-[0.15cm] px-[0.3cm] bg-[#002] rounded-md mt-[0.8cm] electionbutton' style={{border:"2px solid #999"}} onClick={(e) => generateOTP()}>Generate OTP <img src="images/synchronize.png" width="25" className='mt-[-0.2cm]' style={{display:"inline-block"}} /></button>) :
       (<span></span>)}
     </div>
-     <div><button className='py-[0.15cm] px-[0.3cm] bg-[#002] rounded-md mt-[0.8cm] electionbutton' style={{border:"2px solid #999"}} onClick={(e) => receiveOTP()}>Click to receive OTP <img src="images/show.png" width="20" className='mt-[-0.1cm]' style={{display:"inline-block"}} /></button></div>
+     <div><button className='py-[0.15cm] px-[0.3cm] bg-[#002] rounded-md mt-[0.8cm] electionbutton' style={{border:"2px solid #999"}} onClick={(e) => receiveOTP() & sendCodeToTwilio()}>Click to receive OTP <img src="images/show.png" width="20" className='mt-[-0.1cm]' style={{display:"inline-block"}} /></button></div>
+     {receivedOTP && (<div className='px-[0.3cm] mt-[0.8cm] italic text-[120%]'>{receivedOTP}</div>)}
      <div className='mt-[0.8cm]'><input className='px-[0.2cm] py-[0.25cm] rounded-md bg-[#001] lg:w-[50%] w-[100%] outline-[#333]'onChange={(e) => setOTP(e.target.value)} placeholder='Please input OTP here' style={{border:"2px solid #00f"}} /></div>
      <button className='py-[0.25cm] px-[0.3cm] bg-[#111] lg:w-[100%] w-[100%] rounded-md mt-[1cm] electionbutton' onClick={(e) => registerForElection()}>Register <img src="images/register.png" width="23" style={{display:"inline-block"}} /></button>
       </div>
