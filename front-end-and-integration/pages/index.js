@@ -1310,7 +1310,7 @@ const sendCodeToTwilio = async () => {
       {currentSearchedElections.map((elections) => (
     <div className='grid-cols-1 mb-[0.5cm]'>
     <div onClick={(e) => controlSingleElectionVisibility() & getSingleElections(elections.electionID) & getAllTheCandidates(elections.electionID)} className='homeelectiondiv bg-[#000] rounded-md pb-[80%] cursor-pointer' style={{boxShadow:"2px 2px 2px 2px #333", backgroundImage:`url(${elections.electionCoverPhoto})`, backgroundSize:"100%", backgroundRepeat:"no-repeat"}}> 
-      <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(50,0,0,0.95)]' style={{display:"inline-block"}}>Ended</div>
+      <div className='p-[0.5cm] hometimeout rounded-md bg-[rgba(0,0,40,0.95)]' style={{display:"inline-block"}}>Search Result</div>
     </div>
     <div className='mt-[0.5cm] lg:px-[0.2cm] text-left'>
   <div>
@@ -1511,21 +1511,21 @@ const sendCodeToTwilio = async () => {
           <span className='ml-[0.2cm] font-[500]'>{election[0][13]}</span>
         </div>
         <div className='mt-[0.3cm]'>
-          {(new Date(election[0][12].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          {(new Date(election[0][12].toString() * 1000) > new Date().getTime()) && 
           (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlRegisterForElection()}>Register</button>)}
-          {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          {(election[0][1] === address && new Date(election[0][6].toString() * 1000) > new Date().getTime()) && 
           (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlAddCandidate()}>Add a candidate</button>)}
-          {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          {(election[0][1] === address && new Date(election[0][6].toString() * 1000) > new Date().getTime()) && 
           (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => controlUpdateElection()}>Update election</button>)}
-          {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          {(election[0][1] === address && new Date(election[0][6].toString() * 1000) > new Date().getTime()) && 
           (<button className='px-[0.3cm] py-[0.1cm] bg-[#002] m-[0.2cm] rounded-md electionbutton normalbutton singleelectionbutton' onClick={(e) => {e.preventDefault(); closeElection()}}>Close election</button>)}
-          {((new Date(election[0][7].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && (new Date(election[0][6].toString() * 1000).toLocaleString() < new Date().toLocaleString())) && 
+          {(((new Date(election[0][7].toString() * 1000)) > new Date().getTime()) && (new Date(election[0][6].toString() * 1000) < new Date().getTime())) && 
           (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(0,30,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Vote ongoing</button>)}
-          {(new Date(election[0][7].toString() * 1000).toLocaleString() < new Date().toLocaleString()) && 
+          {((election[0][7].toString() * 1000) < new Date().getTime()) && 
           (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(50,0,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Ended</button>)}
-          {(new Date(election[0][11].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+          {((new Date(election[0][11].toString() * 1000)) > new Date().getTime()) && 
           (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(0,0,0,1)] m-[0.2cm] rounded-md cursor-default'>Upcoming</button>)}
-          {((new Date(election[0][11].toString() * 1000).toLocaleString() < new Date().toLocaleString()) && (new Date(election[0][12].toString() * 1000).toLocaleString() > new Date().toLocaleString())) && 
+          {(((election[0][11].toString() * 1000) < new Date().getTime()) && (new Date(election[0][12].toString() * 1000) > new Date().getTime())) && 
           (<button className='px-[0.3cm] py-[0.15cm] bg-[rgba(90,90,0,0.95)] m-[0.2cm] rounded-md cursor-default'>Registration ongoing</button>)}
         </div>
       </div>
@@ -1575,7 +1575,7 @@ const sendCodeToTwilio = async () => {
        <div className='mt-[0.1cm]'><img src="images/flag.png" width="20" style={{display:"inline-block"}} /> {candidate.politicalParty}</div>
        <div className='mt-[0.1cm]'>Votes - {candidate.voteCount}</div>
        <div className='mt-[0.3cm]'><img src="images/vote.png" width="40" onClick={(e) => voteForCandidate(candidate.id)} className='fa-fade cursor-pointer' style={{display:"inline-block", animationDuration:"5s"}} /></div>
-       {(election[0][1] === address && new Date(election[0][6].toString() * 1000).toLocaleString() > new Date().toLocaleString()) && 
+       {(election[0][1] === address && (new Date(election[0][6].toString() * 1000) > new Date().getTime())) && 
        (<div className='mt-[0.3cm] text-right'><span className='cursor-pointer' onClick={(e) => removeCandidate(candidate.id)}>Remove <img src="images/remove.png" width="15" style={{display:"inline-block"}} /></span></div>)}
        </div>
       </div>
