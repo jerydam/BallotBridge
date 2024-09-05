@@ -22,7 +22,7 @@
    - The system automatically ends the election at the set time and announces the winner based on the votes.
 
 5. **Accessing Election Information:**
-   - Anyone can check the details of the election, like what it's about, who the candidates are, and who won.
+   - Anyone can check the details of the election, like what it's about, who the candidates are, and who won. Only the creator of an election has administartive rights over it.
 
 ### How Does It Work?
 ## Connect Wallet
@@ -58,7 +58,7 @@ BallotBridge uses a mix of blockchain and web development tools to create a dece
 ### **Front-End and Integration Tools:**
 - **Web3Modal:** Provides a simple SDK for users to connect their crypto wallets.
 - **Ethers.js:** A JavaScript library to interact with the blockchain and execute transactions.
-- **Lisk Testnet Token Tracker:** Tracks tokens on the Lisk testnet, used for testing purposes.
+- **Lisk Testnet Token Tracker:** Tracks tokens/transactions on the Lisk testnet, used for testing purposes.
 - **Filebase AWS IPFS SDK:** An SDK tool to store files on a decentralized storage network using IPFS (InterPlanetary File System).
 - **Next.js:** A React-based framework used to build the user interface of the application.
 - **Node.js:** A backend JavaScript runtime environment used for server-side operations.
