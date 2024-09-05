@@ -21,7 +21,7 @@
    - The system automatically ends the election at the set time and announces the winner based on the votes.
 
 5. **Accessing Election Information:**
-   - Anyone can check the details of the election, like what it's about, who the candidates are, and who won. Only the creator of an election has administartive rights over it.
+   - Anyone can check the details of the election, like what it's about, who the candidates are, and who won. Only the creator of an election has administartive rights over it, but until voting starts. After voting starts, even the creator of an election has no administrative rights over it. This is to ensure fairness in the voting process.
 
 ### How Does It Work?
 **Connect Wallet**
